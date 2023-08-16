@@ -1,0 +1,175 @@
+library(genoPlotR)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(gggenes)
+library(ggpubr)
+library(writexl)
+
+path<-getwd()
+setwd(path)
+################################
+#Read and transform Cacts MAF output
+maf<-readLines("104_plasmids_cactus_pl72.maf")
+maf <- maf[maf != ""]
+PreList<-paste(maf,collapse="\n")
+v <- strsplit(PreList, "a\n", fixed = TRUE)[[1]]
+v2<-strsplit(v, "\n")
+v2<-v2[-1]
+listOfDfs<-lapply(v2, function(x) data.frame(do.call(rbind, strsplit(x, "\t", fixed=TRUE))))
+#create one large df
+PreMAFDF<-bind_rows(listOfDfs, .id="id")
+####New part, check for number of gaps in each aligned segment
+PreMAFDF$AliStrLength<-nchar(PreMAFDF$X7)
+#Number of aligned characters are in X4
+PreMAFDF$PercGaps<-(PreMAFDF$AliStrLength - as.numeric(PreMAFDF$X4))*100/PreMAFDF$AliStrLength
+#GapsCutoff
+ggplot(PreMAFDF)+
+  geom_density(aes(x=PercGaps))+
+  theme_classic()
+#do cutoff at 50% based on the graph
+PreMAFDFStrict<-subset(PreMAFDF,
+                       PreMAFDF$PercGaps < 50)
+#now do the transformations for the plot
+MAFDF<-PreMAFDFStrict[,c(1,3:7)]
+
+MAFDF<-separate(data = MAFDF, col = X2, into = c("plasmid", "GBID"), sep = '\\.',remove = FALSE,extra = "merge")
+MAFDF$end<-as.numeric(MAFDF$X3)+as.numeric(MAFDF$X4)
+MAFDF$strand<-ifelse(MAFDF$X5 =="+",1,-1)
+MAFDF$X4<-as.numeric(MAFDF$X4)
+
+MAFDFFinal<-MAFDF[,c(1,3,4,5,9,10,6)]
+names(MAFDFFinal)<-c("segment","plasmid","GBID","start","end","strand","length")
+
+#Do additional filter and remove short segments
+
+FilterByLength<-subset(MAFDFFinal,
+                       MAFDFFinal$length > 100)
+
+NumberOfSeqsInSegment<-FilterByLength %>% group_by(segment) %>% summarize(count=length(unique(plasmid)))
+# FilterByAliPresent<-subset(NumberOfSeqsInSegment,
+#                            NumberOfSeqsInSegment$count<2)$segment
+Pl72Coordinates<-subset(FilterByLength,FilterByLength$plasmid == "plasmid72")
+MAFForPlotWide<-merge(Pl72Coordinates,NumberOfSeqsInSegment,by="segment")
+
+#Save table with segments counts
+write_xlsx(MAFForPlotWide, "104_plasmids_MAF_segments_cutoff50_pl72_20230612.xlsx")
+
+#Do segments plot
+SegmentsCoveragePlot<-ggplot()+geom_rect(data=MAFForPlotWide, mapping=aes(xmin=as.numeric(start),
+                                                    xmax=as.numeric(end),
+                                                    ymin=0,ymax=count,
+                                                    alpha = count),
+                                         fill= "#bf812d")+
+  scale_x_continuous(limits=c(-100,190650))+
+  scale_alpha_continuous(range=c(0.2,1))+
+  theme_classic()+
+  theme(legend.position = "none")
+SegmentsCoveragePlot
+###################################
+#load gene data
+PLasmidGFF<-read.csv("plasmid72.CP083423.1.gff3", sep='\t',skip=6, header=F)
+GFFCDS<-subset(PLasmidGFF, PLasmidGFF$V3=="CDS")
+tmp<-GFFCDS %>% separate (V9, sep = "product=", into=paste0("P",1:2))
+tmp2<-separate(data = tmp, col = P2, into = c("product", "rest"), sep = '\\;',extra = "merge")
+tmp3<-separate (data = tmp2, col=P1, sep = "gene=", into=paste0("G",1:2),extra = "merge")
+preGFFProducts<-separate (data = tmp3, col=G2, sep = ";", into=c("gene","else"),extra = "merge")
+preGFFProducts$molecule<-rep("CP083423.1", length(preGFFProducts$V1))
+preGFFProducts$orientation<-ifelse(preGFFProducts$V7=="-", F,T)
+
+###add gene colors
+preGFFProducts$systemlabel<-c(rep("gene",182),"Gabaja","Gabaja","vap","vap","tmn",rep("gene",9))
+preGFFProducts$genelabels<-c(rep("",182),"gajB","gajA","vapC","vapB","tmn",rep("",9))
+genecolors<-c("#6a51a3","#d9d9d9","#7fbf7b","#9ecae1")
+
+GenesPlot<-ggplot(preGFFProducts, aes(xmin = V4, xmax = V5, y = molecule,
+                           forward = orientation,
+                           fill=systemlabel,
+                           color=systemlabel)) +
+  geom_gene_arrow()+
+  ylab("")+
+  scale_fill_manual(values=genecolors)+
+  scale_color_manual(values=genecolors)+
+  #geom_vline(xintercept = c(177174,179746), color = "#af8dc3")+ #Gabaja
+  #geom_vline(xintercept = c(180845,184639), color = "#7fbf7b")+ #tmn
+  scale_x_continuous(limits=c(-100,190650))+
+  theme_classic()+
+  theme(legend.position = "none",
+        axis.text.x = element_blank(),
+        axis.line = element_blank(),
+        axis.ticks.x=element_blank())
+GenesPlot
+
+#save full
+##
+##
+PlotToSave<-ggarrange(GenesPlot,
+                      SegmentsCoveragePlot,
+                      ncol =1,
+                      heights=c(1,1),
+                      hjust=0.5,
+                      align = "v")
+PlotToSave
+
+ggsave("CP083423.1_cactus_coverage_strict_20230612.png", plot = PlotToSave,
+       height =7, width =35, units = "cm", dpi=300)
+ggsave("CP083423.1_cactus_coverage_strict_20230612.svg", plot = PlotToSave,
+       height =7, width =35, units = "cm", dpi=300)
+
+###
+#Zoom on common segments
+SegmentsLimits<-c(168930,190606)
+GenesPlotZoom<-ggplot(data=preGFFProducts, aes(xmin = V4, xmax = V5, y = molecule,
+                                      forward = orientation,
+                                      fill=systemlabel)) +
+  geom_hline(yintercept = "CP083423.1", color = "#969696",
+             linewidth=1.2)+
+  geom_gene_arrow(color="#969696")+
+  geom_text(aes(x=V5-((V5-V4)/2), y=1.1,label=genelabels),
+            angle=35,
+            vjust=0.5,
+            hjust=-0.3,
+            size=4)+
+  ylab("")+
+  xlab("")+
+  scale_fill_manual(values=genecolors)+
+  scale_x_continuous(limits=SegmentsLimits)+
+  theme_classic()+
+  theme(legend.position = "none",
+        axis.text.x = element_blank(),
+        axis.line = element_blank(),
+        axis.ticks.x=element_blank())
+GenesPlotZoom
+
+##Segments Plot Zoom
+SegmentsCoveragePlotZoom<-SegmentsCoveragePlot+ scale_x_continuous(limits=SegmentsLimits)
+
+##
+PlotToSaveZoom<-ggarrange(GenesPlotZoom,
+          SegmentsCoveragePlotZoom,
+          ncol =1,
+          heights=c(1,1),
+          align = "v")
+PlotToSaveZoom
+
+ggsave("CP083423.1_cactus_coverage_strict_zoom_20230612.png", plot = PlotToSaveZoom,
+       height =8, width =35, units = "cm", dpi=300)
+ggsave("CP083423.1_cactus_coverage_strict_zoom_20230612.svg", plot = PlotToSaveZoom,
+       height =8, width =35, units = "cm", dpi=300)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
