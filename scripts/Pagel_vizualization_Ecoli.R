@@ -7,36 +7,30 @@ library(ggplot2)
 library(ggpubr)
 library(writexl)
 
-
-path<-getwd()
-setwd(path)
-setwd("../20230323_Pagel_heatmap_Ecoli_recalculated/")
+setwd("../")
 
 folderwithmatrices<-"../20230209_rerun_pagel_Ecoli/pagel_fitDiscrete/"
 
-#merge p-values together and write to the local folder
-system(paste("cat ",folderwithmatrices,"/*.txt > pagel_rescaled_all_results_20230209.tsv", sep=""))
+# #merge p-values together and write to the local folder
+# system(paste("cat ",folderwithmatrices,"/*.txt > ./data/Ecoli_pagel_fitDiscrete_all.tsv", sep=""))
 
 #######################
 #Open file with pagel p-values
 pvaluecutoff<-0.01
 
 #Read in the data
-PagelResults<-read.csv("pagel_rescaled_all_results_20230209.tsv", header =F, sep="\t", fill =T,
+PagelResults<-read.csv("./data/Ecoli_pagel_fitDiscrete_all.tsv", header =F, sep="\t", fill =T,
                        col.names = paste0("V",seq_len(5)))
 
-
-
-
 #####read counts data in order to check results stability
-EcoliDefence<-read.csv("26k_ecoli_defense.csv", header = T)
+EcoliDefence<-read.csv("./data/26k_Ecoli_with_prophages.csv", header = T)
 
 DefenceBySystem<-EcoliDefence %>% group_by(genome,defense_system) %>%
   count(defense_system)
 DefenceBySystemWide<-as.data.frame(DefenceBySystem %>% 
                                      pivot_wider(names_from = genome, values_from = n))
 #filter
-tree <- read.tree("Ecoli_tree_rapidnj.rM2.treeshrink_corrected.nwk")
+tree <- read.tree("./data/Ecoli_tree_rapidnj.rM2.treeshrink_corrected.nwk")
 ###do proper names on the tree that match the data
 newtipnames<-tree$tip.label
 rep_str = c("'"='','.fna'='')
@@ -86,7 +80,6 @@ DirectionDf<-data.frame(rank=NULL,direction=NULL)
 #add transitions
 for (j in PagelResultsSignifCounts$rank)
 {
-  #j<-89#487#2#8#133
   task<-PagelResultsSignifCounts[PagelResultsSignifCounts$rank==j,]
   
   #most probable model
@@ -101,12 +94,6 @@ for (j in PagelResultsSignifCounts$rank)
   {
     DependentMatrixFile<-read.csv(depmatrixfile)
     DependentMatrix<-(DependentMatrixFile[,c(2:5)]) %>% mutate_if(is.numeric, round, digits=4)
-    
-    #calculate normalized ratios
-    # ratios<-c((DependentMatrix[2,4]-DependentMatrix[1,3])/DependentMatrix[2,4],
-    #           (DependentMatrix[4,2]-DependentMatrix[3,1])/DependentMatrix[4,2],
-    #           (DependentMatrix[3,4]-DependentMatrix[1,2])/DependentMatrix[3,4],
-    #           (DependentMatrix[4,3]-DependentMatrix[2,1])/DependentMatrix[4,3])
 
     ratio<-function(v1,v2){
       smallvalue<-0.00000001
@@ -131,11 +118,16 @@ for (j in PagelResultsSignifCounts$rank)
 #write results to Excel table
 ExcelDf<-merge(PagelResultsSortedCounts,DirectionDf, by="rank",all.x=T)
 
-write_xlsx(ExcelDf,"Ecoli_pagel_rescaled_all_results_20230329.xlsx")
+write_xlsx(ExcelDf,"./data/Ecoli_pagel_all_results_with_direction.xlsx")
 
 
 ####
 PagelResultsDirectionF<-as.data.frame(merge(PagelResultsSignifCounts,DirectionDf, by="rank"))
+
+###
+#Classify systems by abundance
+SystemOrderDf<-subset(DefenseCounts, DefenseCounts$System %in% SystemsToKeep)
+SystemOrder<-SystemOrderDf[order(-SystemOrderDf$sum),]$System
 
 #do symmetric
 PagelResultsSymHalf1<-PagelResultsDirectionF
@@ -145,10 +137,14 @@ PagelResultsSym<-rbind(PagelResultsSymHalf1,PagelResultsSymHalf2)
 
 #do full
 PagelWide<-as.data.frame(pivot_wider(PagelResultsSym[,c(2,3,15)],names_from = System.II, values_from = direction))
-PagelWideSortedRow<-PagelWide[order(PagelWide$System.I),] 
+PagelWideSortedRow<-PagelWide[order(match(PagelWide$System.I,SystemOrder)),]
 PagelWideSorted<-PagelWideSortedRow[,c(2:(length(SystemsToKeep)+1))]%>%
-  select(order(colnames(PagelWideSortedRow[,c(2:(length(SystemsToKeep)+1))])))
+  select(order(match(colnames(PagelWideSortedRow[,c(2:(length(SystemsToKeep)+1))]),SystemOrder)))
 rownames(PagelWideSorted)<-PagelWideSortedRow$System.I
+# PagelWideSortedRow<-PagelWide[order(PagelWide$System.I),] 
+# PagelWideSorted<-PagelWideSortedRow[,c(2:(length(SystemsToKeep)+1))]%>%
+#   select(order(colnames(PagelWideSortedRow[,c(2:(length(SystemsToKeep)+1))])))
+# rownames(PagelWideSorted)<-PagelWideSortedRow$System.I
 
 #do triangles
 Positive<-PagelWideSorted %>% mutate(across(everything(), function(x){replace(x, which(x==-1), NA)}))
@@ -183,7 +179,11 @@ ColorsToClasses<-data.frame(class=unique(AllClassFiltered$class),
                             colors=c("#1b9e77","#d95f02","#7570b3",
                                      "#000000","#e7298a","#a6761d","#e6ab02"))
 AllClassFilteredCol<-merge(AllClassFiltered,ColorsToClasses, by="class")
-AllClassFilteredColSorted<-AllClassFilteredCol[order(AllClassFilteredCol$defense_system),]
+AllClassFilteredColSorted<-AllClassFilteredCol[order(match(AllClassFilteredCol$defense_system,SystemOrder)),]
+
+#Order labels by abundance
+ResultsToPlot$System.I<-factor(ResultsToPlot$System.I,levels=SystemOrder)
+ResultsToPlot$System.II<-factor(ResultsToPlot$System.II,levels=SystemOrder)
 
 ####
 #Plot results
@@ -200,7 +200,8 @@ heatmap<-ggplot(data = ResultsToPlot, aes(System.I,System.II))+
   guides(alpha="none")+
   theme_classic()+
   scale_fill_gradient2(high= "#bf812d", mid="white", low="#35978f", name ="Co-occurence",
-                       labels= c("Negative","","Neutral","","Positive"))+
+                       labels= c("Mutually exclusive","","Neutral","","Co-occuring"))+
+  #scale_x_discrete(limits = SystemOrder)
   theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5, 
                                    color = AllClassFilteredColSorted$colors,
                                    size=12),
@@ -210,7 +211,7 @@ heatmap<-ggplot(data = ResultsToPlot, aes(System.I,System.II))+
         legend.key.size = unit(0.5, 'cm'))
 heatmap
 
-ggsave("Heatmap_pagel_0.005_20230403.png", plot= heatmap,
+ggsave("./figures/Ecoli_pagel_heatmap_pagel_0.005.png", plot= heatmap,
        height = 31, width =35, units ="cm", dpi=200)
-ggsave("Heatmap_pagel_0.005_20230403.svg", plot= heatmap,
+ggsave("./figures/Ecoli_pagel_heatmap_pagel_0.005.svg", plot= heatmap,
        height = 31, width =35, units ="cm", dpi=200)
