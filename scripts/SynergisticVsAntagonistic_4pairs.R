@@ -7,12 +7,11 @@ library(reshape2)
 library(dplyr)
 library(tidyr)
 library(stringr)
+#library(plyr)
 
-path<-getwd()
-setwd(path)
-#setwd("../20230526_AUC_calculations/")
+setwd("../")
 
-folderForResults<-"results20230803"
+folderForResults<-"./figures/EOP_and_AUC"
 
 if (!dir.exists(folderForResults)){
   dir.create(folderForResults)
@@ -22,18 +21,25 @@ if (!dir.exists(folderForResults)){
 
 rangelimits<-c(-5,5)
 
-###Readin the EOP data from Yi
-#This is initial data with all three replicates
-EOPdata<-read_xlsx("EOP_updated_data_Yi_20230531.xlsx")
+###EOP data for 4 pairs with three replicates
+EOPdata<-read_xlsx("./data/EOP_updated_data_Yi_20230531.xlsx")
 
-EOPPlaqueFormation<-read_xlsx("EOP_NoPlaqueFormation_data_Yi_20230531.xlsx")
+EOPPlaqueFormation<-read_xlsx("./data/EOP_NoPlaqueFormation_data_Yi_20230531.xlsx")
 EOPPlaqueFormationFull<-EOPPlaqueFormation[rep(seq_len(nrow(EOPPlaqueFormation)), each = 3), ]
 EOPPlaqueFormationFull$Replicate<-rep(c(1:3),length(EOPPlaqueFormation$`Gabija+YFP`))
 
+#Plot raw data for each pair
+ForRawDataPlot<- gather(EOPdata, System, measurement, 3:12, factor_key=TRUE)
 
-#let's do it for each pair independently
+EOPRawPlot<-ggplot(data=ForRawDataPlot,aes(x=Phage, y=measurement))+
+  geom_bar(stat="summary") +
+  geom_jitter(shape=21)+
+  facet_wrap(~System,ncol=2)+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5))
+EOPRawPlot
 
-##simple function for now to calculate the effect
+##Calculate the effect
 getEffects<-function(dfin)
 {
   df<-as.data.frame(dfin)
@@ -107,7 +113,7 @@ PlotAllPairsMean<-ggplot()+
                 colour = EffectSign),
             width =0.9,
             height=0.9,
-            size=1.1)+
+            linewidth=1.1)+
   scale_fill_gradient2(low="#1a9850", mid="white",
                        high="#d73027",
                        limits = rangelimits, name = "log10(Effect size)")+
@@ -121,6 +127,11 @@ PlotAllPairsMean<-ggplot()+
 PlotAllPairsMean
 #save
 ggsave("GT_DZ_IZ_IK_EOPEffects_ReplicatesMerged_3SD.png",
+       plot=PlotAllPairsMean,
+       path=folderForResults,
+       width = 40,height=10, dpi=300,
+       units = "cm")
+ggsave("GT_DZ_IZ_IK_EOPEffects_ReplicatesMerged_3SD.svg",
        plot=PlotAllPairsMean,
        path=folderForResults,
        width = 40,height=10, dpi=300,
@@ -265,14 +276,16 @@ ggsave("GT_DZ_IZ_IK_EOPEffect_Density_combined.svg",
 ##Calculate AUC
 ##deal with raw data
 
-LiquidEssayRawfile<-"./liquid_assay_20230718.xlsx"
+LiquidEssayRawfile<-"./data/liquid_assay_4pairs.xlsx"
 LiquidEssayrawSheets <- readxl::excel_sheets(LiquidEssayRawfile)
 LiquidEssayRawtibble <- lapply(LiquidEssayrawSheets, function(x) readxl::read_excel(LiquidEssayRawfile, sheet = x,
                                                                     col_types = "numeric"))
 names(LiquidEssayRawtibble) <- LiquidEssayrawSheets
 
-GetDfFromRaw<-function(System){
-  #System<-"D"
+maxmin<-200
+
+GetDfFromRaw<-function(System,lim=maxmin){
+  #System<-"Z"
   Gdf<-as.data.frame(LiquidEssayRawtibble[[System]])
   Gdf<-subset(Gdf,!is.na(Gdf$`Time/min`))
   GdfTrans<-as.data.frame(t(Gdf))[c(2:ncol(Gdf)),]
@@ -281,6 +294,7 @@ GetDfFromRaw<-function(System){
   ExpName<-rownames(GdfTrans)[c(TRUE,rep(FALSE, 2)) ]
   Time<-t(Gdf)[1,]
   colnames(GdfTrans)<-Time
+  GdfTrans<-GdfTrans[,c(1:(lim/5+1))]#this is to fix difference in experiment length
   GdfTrans$replicate<-rep(c(1,2,3),length(GdfTrans$`5`)/3)
   GdfTrans$experimentLN<-rep(ExpName, each=3)
   GdfTransFull<-GdfTrans %>% separate(experimentLN,
@@ -312,20 +326,30 @@ GTRaw<-GetDfFromRaw("GT")
 
 GTfull<-do.call("rbind", list(GRaw,TRaw,GTRaw))
 
+###IK
+KRaw<-GetDfFromRaw("K")
+IKRaw<-GetDfFromRaw("IK")
+
+IKfull<-do.call("rbind", list(IRaw,KRaw,IKRaw))
+
 ######Read tab with controls
 ##
 ControlsDf<-as.data.frame(LiquidEssayRawtibble[["Controls"]])
 ControlsDf<-subset(ControlsDf,!is.na(ControlsDf$`Time/min`))
+#Fix experiment length
 ControlsDfTrans<-as.data.frame(t(ControlsDf))[c(2:ncol(ControlsDf)),]
 ControlsName<-rownames(ControlsDfTrans)[c(TRUE,rep(FALSE, 2)) ]
 ControlsNameSh<-str_replace(ControlsName,"-Control","")
 ControlsNameSh<-str_replace(ControlsNameSh,"ZI","IZ")
+###Fix to use I control for IK
+ControlsNameSh<-recode(ControlsNameSh,I="IK")
 ControlsTime<-t(ControlsDf)[1,]
 colnames(ControlsDfTrans)<-ControlsTime
 ControlsDfTrans$replicate<-rep(c(1,2,3),length(ControlsDfTrans$`5`)/3)
 ControlsDfTrans$system<-rep(ControlsNameSh, each=3)
 ControlsLong<-gather(ControlsDfTrans,Time,OD,`0`:`400`, factor_key = T)
 ControlsLong$minutes<-strtoi(ControlsLong$Time)
+
 
 ################################
 ######Draw raw data on the plots
@@ -351,14 +375,16 @@ getPhagePlot<-function(Df,System,mins,adj=T)
 {
   # Df<-DZfull
   # System<-"DZ"
+  # mins<-maxmin
+  
   DfadjPhageMOI<-Df
-  if(adj)
+    if(adj)
   {
     DfadjPhageMOI<-filterFullDf(Df)
   }
-  
   ControlsSys<-subset(ControlsLong, ControlsLong$system == System)
-  DfphageLong<-gather(DfadjPhageMOI,Time,OD,`0`:`400`, factor_key = T)
+  ControlsSys<-subset(ControlsSys, as.vector(ControlsSys$Time) <= mins)
+  DfphageLong<-gather(DfadjPhageMOI,Time,OD,`0`:`200`, factor_key = T)
   DfphageLong$minutes<-strtoi(DfphageLong$Time)
   
   Phageplot<-ggplot()+
@@ -383,115 +409,120 @@ getPhagePlot<-function(Df,System,mins,adj=T)
 
 ####data
 
-minfrst<-200
-
-DZPlot<-getPhagePlot(DZfull,"DZ",minfrst)
-IZPlot<-getPhagePlot(IZfull,"IZ",minfrst)
-GTPlot<-getPhagePlot(GTfull,"GT",minfrst)
+DZPlot<-getPhagePlot(DZfull,"DZ",maxmin)
+IZPlot<-getPhagePlot(IZfull,"IZ",maxmin)
+GTPlot<-getPhagePlot(GTfull,"GT",maxmin)
+IKPlot<-getPhagePlot(IKfull,"IK",maxmin)
 #save
-ggsave(paste("LiquidAssay_DZ_raw_",minfrst,".png", sep=""),
+ggsave(paste("LiquidAssay_DZ_raw_",maxmin,".png", sep=""),
        plot=DZPlot,
        path=folderForResults,
        height=30, width=30, dpi=300, units ="cm")
-ggsave(paste("LiquidAssay_DZ_raw_",minfrst,".svg", sep=""),
+ggsave(paste("LiquidAssay_DZ_raw_",maxmin,".svg", sep=""),
        plot=DZPlot,
        path=folderForResults,
        height=30, width=30, dpi=300, units ="cm")
-ggsave(paste("LiquidAssay_IZ_raw_",minfrst,".png", sep=""),
+ggsave(paste("LiquidAssay_IZ_raw_",maxmin,".png", sep=""),
        plot=IZPlot,
        path=folderForResults,
        height=30, width=30, dpi=300, units ="cm")
-ggsave(paste("LiquidAssay_IZ_raw_",minfrst,".svg", sep=""),
+ggsave(paste("LiquidAssay_IZ_raw_",maxmin,".svg", sep=""),
        plot=IZPlot,
        path=folderForResults,
        height=30, width=30, dpi=300, units ="cm")
-ggsave(paste("LiquidAssay_GT_raw_",minfrst,".png", sep=""),
+ggsave(paste("LiquidAssay_GT_raw_",maxmin,".png", sep=""),
        plot=GTPlot,
        path=folderForResults,
        height=30, width=30, dpi=300, units ="cm")
-ggsave(paste("LiquidAssay_GT_raw_",minfrst,".svg", sep=""),
+ggsave(paste("LiquidAssay_GT_raw_",maxmin,".svg", sep=""),
        plot=GTPlot,
+       path=folderForResults,
+       height=30, width=30, dpi=300, units ="cm")
+ggsave(paste("LiquidAssay_IK_raw_",maxmin,".png", sep=""),
+       plot=IKPlot,
+       path=folderForResults,
+       height=30, width=30, dpi=300, units ="cm")
+ggsave(paste("LiquidAssay_IK_raw_",maxmin,".svg", sep=""),
+       plot=IKPlot,
        path=folderForResults,
        height=30, width=30, dpi=300, units ="cm")
 
 ###################
 ####Transform to AUC
-getAUCplot<-function(Df,System,maxobs=minfrst)
-{
-  #Df<-IZfull
-  #System<-"IZ"
-  DZadj<-filterFullDf(Df)
-  DZadjGrowth<-DZadj[,c(2:(ncol(DZadj)-4))]-DZadj[,c(1)]
-  DZadjGrowthMin<-DZadjGrowth[,c(1:which(colnames(DZadjGrowth)==toString(maxobs))+1)]
-  DZadjNoNeg<-DZadjGrowthMin
-  DZadjNoNeg[DZadjNoNeg<0]<-0
-  DZadjNoNegMult<-5*DZadjNoNeg
-  DZadjNoNegMult$AUC<-rowSums(DZadjNoNegMult)
-  
-  DZAUCDf<-DZadj[,c((ncol(DZadj)-3):(ncol(DZadj)))]
-  DZAUCDf$AUC<-DZadjNoNegMult$AUC
-  
-  DZAUCwide<-spread(DZAUCDf, system, AUC)
-  DZAUCwide$AdditivExp<-DZAUCwide[,4]+DZAUCwide[,6]
-  
-  DZAUCwide$logMOI<-log10(as.double(DZAUCwide$MOI))
-  ForPlot<-gather(DZAUCwide,Line,AUC,4:7, factor_key = T)
-  
-  ControlsSys<-subset(ControlsLong, ControlsLong$system == System)
-  ControlSysLim<-subset(ControlsSys,as.numeric(as.character(ControlsSys$Time)) <= minfrst)
-  ControlSysLimWide<-spread(ControlSysLim[,c(1:4)],Time,OD)
-  ControlSysLimWideGrowth<-ControlSysLimWide[,c(4:ncol(ControlSysLimWide))]-
-    ControlSysLimWide[,c(3)]
-  ControlSysLimWideGrowth[ControlSysLimWideGrowth<0]<-0
-  ControlMult<-5*ControlSysLimWideGrowth
-  ControlMult$AUC<-rowSums(ControlMult)
-  
-  
-  legendcolors<-c("#d95f02","#1b9e77","#7570b3","black")
-  names(legendcolors)<-c(colnames(DZAUCwide)[4:6],"AdditivExp")
-  
-  AUCPlot<-ggplot()+
-    geom_line(data=ForPlot,aes(x=logMOI, y=AUC,
-                  color=Line,
-                  linetype=as.factor(replicate)))+
-    facet_wrap(~Phage, nrow = 1)+
-    geom_hline(yintercept = ControlMult$AUC,
-               color="grey")+#,linetype=ControlSysLimWide$replicate)+
-    ylab("AUC")+
-    xlab("MOI(log10)")+
-    theme_classic()+
-    theme(strip.background = element_blank(),
-          strip.text = element_text(face = "bold"))+
-    scale_color_manual(values=legendcolors)
-  
-  return(AUCPlot)
-}
-
-DZAUCPlot<-getAUCplot(DZfull,"DZ")
-IZAUCPlot<-getAUCplot(IZfull,"IZ")
-GTAUCPlot<-getAUCplot(GTfull,"GT")
-
-ggsave(paste("LiquidAssay_DZ_AUC_",minfrst,".png", sep=""),
-       plot=DZAUCPlot,
-       path=folderForResults,
-       height=8, width=35, dpi=300, units ="cm")
-ggsave(paste("LiquidAssay_IZ_AUC_",minfrst,".png", sep=""),
-       plot=IZAUCPlot,
-       path=folderForResults,
-       height=8, width=35, dpi=300, units ="cm")
-ggsave(paste("LiquidAssay_GT_AUC_",minfrst,".png", sep=""),
-       plot=GTAUCPlot,
-       path=folderForResults,
-       height=8, width=35, dpi=300, units ="cm")
+# getAUCplot<-function(Df,System,maxobs=maxmin)
+# {
+#   # Df<-IZfull
+#   # System<-"IZ"
+#   DZadj<-filterFullDf(Df)
+#   DZadjGrowth<-DZadj[,c(2:(ncol(DZadj)-4))]-DZadj[,c(1)]
+#   DZadjGrowthMin<-DZadjGrowth[,c(1:which(colnames(DZadjGrowth)==toString(maxobs)))]
+#   DZadjNoNeg<-DZadjGrowthMin
+#   DZadjNoNeg[DZadjNoNeg<0]<-0
+#   DZadjNoNegMult<-5*DZadjNoNeg
+#   DZadjNoNegMult$AUC<-rowSums(DZadjNoNegMult)
+#   
+#   DZAUCDf<-DZadj[,c((ncol(DZadj)-3):(ncol(DZadj)))]
+#   DZAUCDf$AUC<-DZadjNoNegMult$AUC
+#   
+#   DZAUCwide<-spread(DZAUCDf, system, AUC)
+#   DZAUCwide$AdditivExp<-DZAUCwide[,4]+DZAUCwide[,6]
+#   
+#   DZAUCwide$logMOI<-log10(as.double(DZAUCwide$MOI))
+#   ForPlot<-gather(DZAUCwide,Line,AUC,4:7, factor_key = T)
+#   
+#   ControlsSys<-subset(ControlsLong, ControlsLong$system == System)
+#   ControlSysLim<-subset(ControlsSys,as.numeric(as.character(ControlsSys$Time)) <= maxmin)
+#   ControlSysLimWide<-spread(ControlSysLim[,c(1:4)],Time,OD)
+#   ControlSysLimWideGrowth<-ControlSysLimWide[,c(4:ncol(ControlSysLimWide))]-
+#     ControlSysLimWide[,c(3)]
+#   ControlSysLimWideGrowth[ControlSysLimWideGrowth<0]<-0
+#   ControlMult<-5*ControlSysLimWideGrowth
+#   ControlMult$AUC<-rowSums(ControlMult)
+#   
+#   
+#   legendcolors<-c("#d95f02","#1b9e77","#7570b3","black")
+#   names(legendcolors)<-c(colnames(DZAUCwide)[4:6],"AdditivExp")
+#   
+#   AUCPlot<-ggplot()+
+#     geom_line(data=ForPlot,aes(x=logMOI, y=AUC,
+#                   color=Line,
+#                   linetype=as.factor(replicate)))+
+#     facet_wrap(~Phage, nrow = 1)+
+#     geom_hline(yintercept = ControlMult$AUC,
+#                color="grey")+#,linetype=ControlSysLimWide$replicate)+
+#     ylab("AUC")+
+#     xlab("MOI(log10)")+
+#     theme_classic()+
+#     theme(strip.background = element_blank(),
+#           strip.text = element_text(face = "bold"))+
+#     scale_color_manual(values=legendcolors)
+#   
+#   return(AUCPlot)
+# }
+# 
+# DZAUCPlot<-getAUCplot(DZfull,"DZ")
+# IZAUCPlot<-getAUCplot(IZfull,"IZ")
+# GTAUCPlot<-getAUCplot(GTfull,"GT")
+# 
+# ggsave(paste("LiquidAssay_DZ_AUC_",minfrst,".png", sep=""),
+#        plot=DZAUCPlot,
+#        path=folderForResults,
+#        height=8, width=35, dpi=300, units ="cm")
+# ggsave(paste("LiquidAssay_IZ_AUC_",minfrst,".png", sep=""),
+#        plot=IZAUCPlot,
+#        path=folderForResults,
+#        height=8, width=35, dpi=300, units ="cm")
+# ggsave(paste("LiquidAssay_GT_AUC_",minfrst,".png", sep=""),
+#        plot=GTAUCPlot,
+#        path=folderForResults,
+#        height=8, width=35, dpi=300, units ="cm")
 
 ###get AUC plot mean
-getAUCMeanplot<-function(Df,System,maxobs=minfrst,ci)
+getAUCMeanplot<-function(Df,System,maxobs=maxmin,ci)
 {
-  #Df<-IZfull
-  #System<-"IZ"
   DZadj<-filterFullDf(Df)
   DZadjGrowth<-DZadj[,c(2:(ncol(DZadj)-4))]-DZadj[,c(1)]
-  DZadjGrowthMin<-DZadjGrowth[,c(1:which(colnames(DZadjGrowth)==toString(maxobs))+1)]
+  DZadjGrowthMin<-DZadjGrowth[,c(1:which(colnames(DZadjGrowth)==toString(maxobs)))]
   DZadjNoNeg<-DZadjGrowthMin
   DZadjNoNeg[DZadjNoNeg<0]<-0
   DZadjNoNegMult<-5*DZadjNoNeg
@@ -529,7 +560,7 @@ getAUCMeanplot<-function(Df,System,maxobs=minfrst,ci)
   #But I am only using the ones for pairs because they all are similar
   #I need supplementary figure comparing controls
   ControlsSys<-subset(ControlsLong, ControlsLong$system == System)
-  ControlSysLim<-subset(ControlsSys,as.numeric(as.character(ControlsSys$Time)) <= minfrst)
+  ControlSysLim<-subset(ControlsSys,as.numeric(as.character(ControlsSys$Time)) <= maxobs)
   ControlSysLimWide<-spread(ControlSysLim[,c(1:4)],Time,OD)
   ControlSysLimWideGrowth<-ControlSysLimWide[,c(4:ncol(ControlSysLimWide))]-
     ControlSysLimWide[,c(3)]
@@ -559,11 +590,12 @@ getAUCMeanplot<-function(Df,System,maxobs=minfrst,ci)
                 linewidth=0.1,
                 alpha=0.2)+
     geom_line(aes(x=logMOI, y=Mean,
-                   color=system),
-              size=0.1)+
-    geom_point(aes(x=logMOI, y=Mean,
                                color=system),
-               shape=16, size=2)+
+              linewidth=0.3,
+              linetype="dotted")+
+    geom_point(aes(x=logMOI, y=Mean,
+                  color=system),
+              shape=16)+
     facet_wrap(~Phage, nrow = 1)+
     ylab("AUC")+
     xlab("MOI(log10)")+
@@ -580,28 +612,39 @@ confidenceinterval<-.95
 DZAUCMeanPlot<-getAUCMeanplot(DZfull,"DZ",ci=confidenceinterval)
 IZAUCMeanPlot<-getAUCMeanplot(IZfull,"IZ",ci=confidenceinterval)
 GTAUCMeanPlot<-getAUCMeanplot(GTfull,"GT",ci=confidenceinterval)
+IKAUCMeanPlot<-getAUCMeanplot(IKfull,"IK",ci=confidenceinterval)
 
-ggsave(paste("LiquidAssay_DZ_AUCMean_",minfrst,"_ci_",confidenceinterval,".png", sep=""),
+ggsave(paste("LiquidAssay_DZ_AUCMean_",maxmin,"_ci_",confidenceinterval,".svg", sep=""),
        plot=DZAUCMeanPlot,
        path=folderForResults,
        height=8, width=35, dpi=300, units ="cm")
-ggsave(paste("LiquidAssay_IZ_AUCMean_",minfrst,"_ci_",confidenceinterval,".png", sep=""),
+ggsave(paste("LiquidAssay_IZ_AUCMean_",maxmin,"_ci_",confidenceinterval,".svg", sep=""),
        plot=IZAUCMeanPlot,
        path=folderForResults,
        height=8, width=35, dpi=300, units ="cm")
-ggsave(paste("LiquidAssay_GT_AUCMean_",minfrst,"_ci_",confidenceinterval,".png", sep=""),
+ggsave(paste("LiquidAssay_GT_AUCMean_",maxmin,"_ci_",confidenceinterval,".svg", sep=""),
        plot=GTAUCMeanPlot,
        path=folderForResults,
        height=8, width=35, dpi=300, units ="cm")
-ggsave(paste("LiquidAssay_DZ_AUCMean_",minfrst,"_ci_",confidenceinterval,".svg", sep=""),
+ggsave(paste("LiquidAssay_IK_AUCMean_",maxmin,"_ci_",confidenceinterval,".svg", sep=""),
+       plot=IKAUCMeanPlot,
+       path=folderForResults,
+       height=8, width=35, dpi=300, units ="cm")
+
+#
+ggsave(paste("LiquidAssay_DZ_AUCMean_",maxmin,"_ci_",confidenceinterval,".png", sep=""),
        plot=DZAUCMeanPlot,
        path=folderForResults,
        height=8, width=35, dpi=300, units ="cm")
-ggsave(paste("LiquidAssay_IZ_AUCMean_",minfrst,"_ci_",confidenceinterval,".svg", sep=""),
+ggsave(paste("LiquidAssay_IZ_AUCMean_",maxmin,"_ci_",confidenceinterval,".png", sep=""),
        plot=IZAUCMeanPlot,
        path=folderForResults,
        height=8, width=35, dpi=300, units ="cm")
-ggsave(paste("LiquidAssay_GT_AUCMean_",minfrst,"_ci_",confidenceinterval,".svg", sep=""),
+ggsave(paste("LiquidAssay_GT_AUCMean_",maxmin,"_ci_",confidenceinterval,".png", sep=""),
        plot=GTAUCMeanPlot,
+       path=folderForResults,
+       height=8, width=35, dpi=300, units ="cm")
+ggsave(paste("LiquidAssay_IK_AUCMean_",maxmin,"_ci_",confidenceinterval,".png", sep=""),
+       plot=IKAUCMeanPlot,
        path=folderForResults,
        height=8, width=35, dpi=300, units ="cm")
