@@ -125,7 +125,8 @@ write_xlsx(ExcelDf,"./data/Ecoli_pagel_all_results_with_direction.xlsx")
 PagelResultsDirectionF<-as.data.frame(merge(PagelResultsSignifCounts,DirectionDf, by="rank"))
 
 ###
-#Classify systems by abundance
+#Get vector of systems ordered by abundance
+#It is use later on to sort the data on heatmap
 SystemOrderDf<-subset(DefenseCounts, DefenseCounts$System %in% SystemsToKeep)
 SystemOrder<-SystemOrderDf[order(-SystemOrderDf$sum),]$System
 
@@ -137,14 +138,11 @@ PagelResultsSym<-rbind(PagelResultsSymHalf1,PagelResultsSymHalf2)
 
 #do full
 PagelWide<-as.data.frame(pivot_wider(PagelResultsSym[,c(2,3,15)],names_from = System.II, values_from = direction))
+#sort by System abundance
 PagelWideSortedRow<-PagelWide[order(match(PagelWide$System.I,SystemOrder)),]
 PagelWideSorted<-PagelWideSortedRow[,c(2:(length(SystemsToKeep)+1))]%>%
   select(order(match(colnames(PagelWideSortedRow[,c(2:(length(SystemsToKeep)+1))]),SystemOrder)))
 rownames(PagelWideSorted)<-PagelWideSortedRow$System.I
-# PagelWideSortedRow<-PagelWide[order(PagelWide$System.I),] 
-# PagelWideSorted<-PagelWideSortedRow[,c(2:(length(SystemsToKeep)+1))]%>%
-#   select(order(colnames(PagelWideSortedRow[,c(2:(length(SystemsToKeep)+1))])))
-# rownames(PagelWideSorted)<-PagelWideSortedRow$System.I
 
 #do triangles
 Positive<-PagelWideSorted %>% mutate(across(everything(), function(x){replace(x, which(x==-1), NA)}))
@@ -200,7 +198,7 @@ heatmap<-ggplot(data = ResultsToPlot, aes(System.I,System.II))+
   guides(alpha="none")+
   theme_classic()+
   scale_fill_gradient2(high= "#bf812d", mid="white", low="#35978f", name ="Co-occurence",
-                       labels= c("Mutually exclusive","","Neutral","","Co-occuring"))+
+                       labels= c("Mutually exclusive","","","","Co-occuring"))+
   #scale_x_discrete(limits = SystemOrder)
   theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5, 
                                    color = AllClassFilteredColSorted$colors,
