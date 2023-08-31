@@ -167,9 +167,8 @@ DrawEffectSizePlot<-function(df,colplaque,title)
     theme(axis.text.x = element_text(angle = 90, hjust=1, vjust =0.5),
           legend.position = "bottom")
   
-  ######In this version I was doing the patterns on top of tiles to show 
+  ######Patterns on top of tiles to show 
   ######the ones that are not forming plaques
-  ######It works but it is just slow
   #   Plot<-ggplot()+
   #   geom_tile_pattern(data =dfforplot,
   #             aes(y = Replicate, x = Phage, fill = EffectSize, 
