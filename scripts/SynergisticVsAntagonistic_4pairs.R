@@ -7,7 +7,6 @@ library(reshape2)
 library(dplyr)
 library(tidyr)
 library(stringr)
-#library(plyr)
 
 setwd("../")
 
@@ -22,9 +21,9 @@ if (!dir.exists(folderForResults)){
 rangelimits<-c(-5,5)
 
 ###EOP data for 4 pairs with three replicates
-EOPdata<-read_xlsx("./data/EOP_updated_data_Yi_20230531.xlsx")
+EOPdata<-read_xlsx("./data/EOP_20230531.xlsx")
 
-EOPPlaqueFormation<-read_xlsx("./data/EOP_NoPlaqueFormation_data_Yi_20230531.xlsx")
+EOPPlaqueFormation<-read_xlsx("./data/EOP_NoPlaqueFormation_20230531.xlsx")
 EOPPlaqueFormationFull<-EOPPlaqueFormation[rep(seq_len(nrow(EOPPlaqueFormation)), each = 3), ]
 EOPPlaqueFormationFull$Replicate<-rep(c(1:3),length(EOPPlaqueFormation$`Gabija+YFP`))
 
@@ -449,6 +448,7 @@ ggsave(paste("LiquidAssay_IK_raw_",maxmin,".svg", sep=""),
 
 ###################
 ####Transform to AUC
+####This is only necessary to lock at the raw data before switching to means
 # getAUCplot<-function(Df,System,maxobs=maxmin)
 # {
 #   # Df<-IZfull
