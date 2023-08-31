@@ -447,7 +447,7 @@ ggsave(paste("LiquidAssay_IK_raw_",maxmin,".svg", sep=""),
 
 ###################
 ####Transform to AUC
-####This is only necessary to lock at the raw data before switching to means
+####This is only necessary to look at the raw data before switching to means
 # getAUCplot<-function(Df,System,maxobs=maxmin)
 # {
 #   # Df<-IZfull
