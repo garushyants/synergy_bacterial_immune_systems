@@ -197,7 +197,7 @@ heatmap<-ggplot(data = ResultsToPlot, aes(System.I,System.II))+
             inherit.aes = TRUE)+
   guides(alpha="none")+
   theme_classic()+
-  scale_fill_gradient2(high= "#bf812d", mid="white", low="#35978f", name ="Co-occurence",
+  scale_fill_gradient2(high= "#bf812d", mid="white", low="#35978f", name="",
                        labels= c("Mutually exclusive","","","","Co-occuring"))+
   #scale_x_discrete(limits = SystemOrder)
   theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5, 
