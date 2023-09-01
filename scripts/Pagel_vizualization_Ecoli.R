@@ -140,8 +140,8 @@ PagelResultsSym<-rbind(PagelResultsSymHalf1,PagelResultsSymHalf2)
 PagelWide<-as.data.frame(pivot_wider(PagelResultsSym[,c(2,3,15)],names_from = System.II, values_from = direction))
 #sort by System abundance
 PagelWideSortedRow<-PagelWide[order(match(PagelWide$System.I,SystemOrder)),]
-PagelWideSorted<-PagelWideSortedRow[,c(2:(length(SystemsToKeep)+1))]%>%
-  select(order(match(colnames(PagelWideSortedRow[,c(2:(length(SystemsToKeep)+1))]),SystemOrder)))
+PagelWideSorted<-PagelWideSortedRow[,c(2:ncol(PagelWideSortedRow))]%>%
+  select(order(match(colnames(PagelWideSortedRow[,c(2:ncol(PagelWideSortedRow))]),SystemOrder)))
 rownames(PagelWideSorted)<-PagelWideSortedRow$System.I
 
 #do triangles
