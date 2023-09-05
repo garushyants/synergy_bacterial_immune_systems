@@ -386,14 +386,15 @@ getPhagePlot<-function(Df,System,mins,adj=T)
   DfphageLong$minutes<-strtoi(DfphageLong$Time)
   
   Phageplot<-ggplot()+
+    geom_line(data=ControlsSys,
+              aes(x=minutes,y=OD,linetype=as.factor(replicate)),
+              color = "#dbd1bf",
+              linewidth=0.5)+
     geom_line(data=DfphageLong,
               aes(x=minutes,y=OD,color=system, linetype=as.factor(replicate)),
               linewidth=1.1)+
     scale_color_manual(values=c("#5d5e5e","#a54332","#949fa6"))+
-    geom_line(data=ControlsSys,
-              aes(x=minutes,y=OD,linetype=as.factor(replicate)),
-              color = "#dbd1bf",
-              linewidth=0.9)+
+
     ylim(c(0,1.5))+
     xlim(c(0,mins))+
     facet_grid(Phage~MOI)+
