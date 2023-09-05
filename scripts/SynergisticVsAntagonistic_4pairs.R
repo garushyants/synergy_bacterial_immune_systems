@@ -389,10 +389,10 @@ getPhagePlot<-function(Df,System,mins,adj=T)
     geom_line(data=DfphageLong,
               aes(x=minutes,y=OD,color=system, linetype=as.factor(replicate)),
               linewidth=1.1)+
-    scale_color_manual(values=c("#d95f02","#1b9e77","#7570b3"))+
+    scale_color_manual(values=c("#5d5e5e","#a54332","#949fa6"))+
     geom_line(data=ControlsSys,
               aes(x=minutes,y=OD,linetype=as.factor(replicate)),
-              color = "grey",
+              color = "#dbd1bf",
               linewidth=0.9)+
     ylim(c(0,1.5))+
     xlim(c(0,mins))+
@@ -448,77 +448,91 @@ ggsave(paste("LiquidAssay_IK_raw_",maxmin,".svg", sep=""),
 ###################
 ####Transform to AUC
 ####This is only necessary to look at the raw data before switching to means
-# getAUCplot<-function(Df,System,maxobs=maxmin)
-# {
-#   # Df<-IZfull
-#   # System<-"IZ"
-#   DZadj<-filterFullDf(Df)
-#   DZadjGrowth<-DZadj[,c(2:(ncol(DZadj)-4))]-DZadj[,c(1)]
-#   DZadjGrowthMin<-DZadjGrowth[,c(1:which(colnames(DZadjGrowth)==toString(maxobs)))]
-#   DZadjNoNeg<-DZadjGrowthMin
-#   DZadjNoNeg[DZadjNoNeg<0]<-0
-#   DZadjNoNegMult<-5*DZadjNoNeg
-#   DZadjNoNegMult$AUC<-rowSums(DZadjNoNegMult)
-#   
-#   DZAUCDf<-DZadj[,c((ncol(DZadj)-3):(ncol(DZadj)))]
-#   DZAUCDf$AUC<-DZadjNoNegMult$AUC
-#   
-#   DZAUCwide<-spread(DZAUCDf, system, AUC)
-#   DZAUCwide$AdditivExp<-DZAUCwide[,4]+DZAUCwide[,6]
-#   
-#   DZAUCwide$logMOI<-log10(as.double(DZAUCwide$MOI))
-#   ForPlot<-gather(DZAUCwide,Line,AUC,4:7, factor_key = T)
-#   
-#   ControlsSys<-subset(ControlsLong, ControlsLong$system == System)
-#   ControlSysLim<-subset(ControlsSys,as.numeric(as.character(ControlsSys$Time)) <= maxmin)
-#   ControlSysLimWide<-spread(ControlSysLim[,c(1:4)],Time,OD)
-#   ControlSysLimWideGrowth<-ControlSysLimWide[,c(4:ncol(ControlSysLimWide))]-
-#     ControlSysLimWide[,c(3)]
-#   ControlSysLimWideGrowth[ControlSysLimWideGrowth<0]<-0
-#   ControlMult<-5*ControlSysLimWideGrowth
-#   ControlMult$AUC<-rowSums(ControlMult)
-#   
-#   
-#   legendcolors<-c("#d95f02","#1b9e77","#7570b3","black")
-#   names(legendcolors)<-c(colnames(DZAUCwide)[4:6],"AdditivExp")
-#   
-#   AUCPlot<-ggplot()+
-#     geom_line(data=ForPlot,aes(x=logMOI, y=AUC,
-#                   color=Line,
-#                   linetype=as.factor(replicate)))+
-#     facet_wrap(~Phage, nrow = 1)+
-#     geom_hline(yintercept = ControlMult$AUC,
-#                color="grey")+#,linetype=ControlSysLimWide$replicate)+
-#     ylab("AUC")+
-#     xlab("MOI(log10)")+
-#     theme_classic()+
-#     theme(strip.background = element_blank(),
-#           strip.text = element_text(face = "bold"))+
-#     scale_color_manual(values=legendcolors)
-#   
-#   return(AUCPlot)
-# }
-# 
-# DZAUCPlot<-getAUCplot(DZfull,"DZ")
-# IZAUCPlot<-getAUCplot(IZfull,"IZ")
-# GTAUCPlot<-getAUCplot(GTfull,"GT")
-# 
-# ggsave(paste("LiquidAssay_DZ_AUC_",minfrst,".png", sep=""),
-#        plot=DZAUCPlot,
-#        path=folderForResults,
-#        height=8, width=35, dpi=300, units ="cm")
-# ggsave(paste("LiquidAssay_IZ_AUC_",minfrst,".png", sep=""),
-#        plot=IZAUCPlot,
-#        path=folderForResults,
-#        height=8, width=35, dpi=300, units ="cm")
-# ggsave(paste("LiquidAssay_GT_AUC_",minfrst,".png", sep=""),
-#        plot=GTAUCPlot,
-#        path=folderForResults,
-#        height=8, width=35, dpi=300, units ="cm")
+getAUCplot<-function(Df,System,maxobs=maxmin)
+{
+  # Df<-IZfull
+  # System<-"IZ"
+  DZadj<-filterFullDf(Df)
+  DZadjGrowth<-DZadj[,c(2:(ncol(DZadj)-4))]-DZadj[,c(1)]
+  DZadjGrowthMin<-DZadjGrowth[,c(1:which(colnames(DZadjGrowth)==toString(maxobs)))]
+  DZadjNoNeg<-DZadjGrowthMin
+  DZadjNoNeg[DZadjNoNeg<0]<-0
+  DZadjNoNegMult<-5*DZadjNoNeg
+  DZadjNoNegMult$AUC<-rowSums(DZadjNoNegMult)
+
+  DZAUCDf<-DZadj[,c((ncol(DZadj)-3):(ncol(DZadj)))]
+  DZAUCDf$AUC<-DZadjNoNegMult$AUC
+
+  DZAUCwide<-spread(DZAUCDf, system, AUC)
+  DZAUCwide$Expected<-DZAUCwide[,4]+DZAUCwide[,6]
+
+  DZAUCwide$logMOI<-log10(as.double(DZAUCwide$MOI))
+  ForPlot<-gather(DZAUCwide,Line,AUC,4:7, factor_key = T)
+
+  ControlsSys<-subset(ControlsLong, ControlsLong$system == System)
+  ControlSysLim<-subset(ControlsSys,as.numeric(as.character(ControlsSys$Time)) <= maxmin)
+  ControlSysLimWide<-spread(ControlSysLim[,c(1:4)],Time,OD)
+  ControlSysLimWideGrowth<-ControlSysLimWide[,c(4:ncol(ControlSysLimWide))]-
+    ControlSysLimWide[,c(3)]
+  ControlSysLimWideGrowth[ControlSysLimWideGrowth<0]<-0
+  ControlMult<-5*ControlSysLimWideGrowth
+  ControlMult$AUC<-rowSums(ControlMult)
+
+  legendcolors<-c("#5d5e5e","#a54332","#949fa6","#00468b")
+  #legendcolors<-c("#d95f02","#1b9e77","#7570b3","black")
+  names(legendcolors)<-c(colnames(DZAUCwide)[4:6],"Expected")
+
+  AUCPlot<-ggplot()+
+    geom_point(data=ForPlot,aes(x=logMOI, y=AUC,
+                  color=Line,
+                  shape=as.factor(replicate)))+
+    facet_wrap(~Phage, nrow = 1)+
+    geom_hline(yintercept = ControlMult$AUC,
+               color="#dbd1bf")+#,linetype=ControlSysLimWide$replicate)+
+    ylab("AUC")+
+    xlab("MOI(log10)")+
+    theme_classic()+
+    scale_x_continuous(breaks=seq(-4,1,1))+
+    theme(axis.text= element_text(family = "ArialMT",size=8),
+          panel.grid.minor = element_blank(),
+          axis.ticks = element_line(color="black",linewidth=0.4),
+          panel.border = element_rect(fill=NA,colour = "black",
+                                      linewidth=0.5,
+                                      linetype = "solid"),
+          panel.background = element_blank(),
+          strip.text.y = element_text(family = "ArialMT",size=8),
+          strip.background = element_blank(),
+          strip.text = element_text(face = "bold"))+
+    scale_color_manual(values=legendcolors)
+
+  return(AUCPlot)
+}
+
+DZAUCPlot<-getAUCplot(DZfull,"DZ")
+IZAUCPlot<-getAUCplot(IZfull,"IZ")
+GTAUCPlot<-getAUCplot(GTfull,"GT")
+IKAUCPlot<-getAUCplot(GTfull,"IK")
+
+ggsave(paste("LiquidAssay_DZ_AUC_",maxmin,".svg", sep=""),
+       plot=DZAUCPlot,
+       path=folderForResults,
+       height=8, width=35, dpi=300, units ="cm")
+ggsave(paste("LiquidAssay_IZ_AUC_",maxmin,".svg", sep=""),
+       plot=IZAUCPlot,
+       path=folderForResults,
+       height=8, width=35, dpi=300, units ="cm")
+ggsave(paste("LiquidAssay_GT_AUC_",maxmin,".svg", sep=""),
+       plot=GTAUCPlot,
+       path=folderForResults,
+       height=8, width=35, dpi=300, units ="cm")
 
 ###get AUC plot mean
 getAUCMeanplot<-function(Df,System,maxobs=maxmin,ci)
 {
+  # Df<-IZfull
+  # System<-"IZ"
+  # ci<-.95
+  
   DZadj<-filterFullDf(Df)
   DZadjGrowth<-DZadj[,c(2:(ncol(DZadj)-4))]-DZadj[,c(1)]
   DZadjGrowthMin<-DZadjGrowth[,c(1:which(colnames(DZadjGrowth)==toString(maxobs)))]
@@ -529,11 +543,12 @@ getAUCMeanplot<-function(Df,System,maxobs=maxmin,ci)
   
   DZAUCDf<-DZadj[,c((ncol(DZadj)-3):(ncol(DZadj)))]
   DZAUCDf$AUC<-DZadjNoNegMult$AUC
+  DZAUCDf$logMOI<-log10(as.double(DZAUCDf$MOI))
   
   #Calculate Expected sum
   DZAUCDfwide<-spread(DZAUCDf,system,AUC)
-  DZAUCDfwide$AdditivExp<-DZAUCDfwide[,4]+DZAUCDfwide[,6]
-  AdditivExpMeanSD<-DZAUCDfwide %>% group_by(Phage,MOI) %>%
+  DZAUCDfwide$AdditivExp<-DZAUCDfwide[,5]+DZAUCDfwide[,7]
+  AdditivExpMeanSD<-DZAUCDfwide %>% group_by(Phage,logMOI) %>%
     summarise(Mean=mean(AdditivExp),
               SD=sd(AdditivExp))
   AdditivExpMeanSD$system<-rep("Expected", length(AdditivExpMeanSD$Phage))
@@ -550,7 +565,7 @@ getAUCMeanplot<-function(Df,System,maxobs=maxmin,ci)
   AdditivExpForPlot<-GetConfidenceInterval(AdditivExpMeanSD)
   
   ##Calculate mean over replicates
-  DZAUCDfMean<-DZAUCDf %>% group_by(Phage,MOI,system)%>%
+  DZAUCDfMean<-DZAUCDf %>% group_by(Phage,logMOI,system)%>%
     summarise(Mean=mean(AUC),
               SD=sd(AUC))
   DZAUCForPlot<-GetConfidenceInterval(DZAUCDfMean)
@@ -568,7 +583,7 @@ getAUCMeanplot<-function(Df,System,maxobs=maxmin,ci)
   ControlMult$AUC<-rowSums(ControlMult)
   ControlMean<-mean(ControlMult$AUC)
   ControlSD<-sd(ControlMult$AUC)
-  PreplotControlDf<-AdditivExpForPlot[,c("Phage","MOI")]
+  PreplotControlDf<-AdditivExpForPlot[,c("Phage","logMOI")]
   PreplotControlDf$Mean<-rep(ControlMean,length(AdditivExpForPlot$Phage))
   PreplotControlDf$SD=rep(ControlSD,length(AdditivExpForPlot$Phage))
   PreplotControlDf$system<-rep("Control",length(AdditivExpForPlot$Phage))
@@ -576,34 +591,37 @@ getAUCMeanplot<-function(Df,System,maxobs=maxmin,ci)
   
   
   ForPlot<-rbind(AdditivExpForPlot,ControlDfForPlot,DZAUCForPlot)
-  ForPlot$logMOI<-log10(as.double(ForPlot$MOI))
   
   ##Plot results
   #Select colors
-  legendcolors<-c("#d95f02","#1b9e77","#7570b3","black","grey")
-  names(legendcolors)<-c(colnames(DZAUCDfwide)[4:6],"Expected","Control")
+  legendcolors<-c("#5d5e5e","#a54332","#949fa6","#00468b","#dbd1bf")
+  names(legendcolors)<-c(colnames(DZAUCDfwide)[5:7],"Expected","Control")
   #Plot
   AUCPlotWithConf<-ggplot(data=ForPlot)+
-    geom_ribbon(aes(x=logMOI,ymin=lower,ymax=upper, fill=system,
-                    color=system),
-                linewidth=0.1,
-                alpha=0.2)+
-    geom_line(aes(x=logMOI, y=Mean,
-                               color=system),
-              linewidth=0.3,
-              linetype="dotted")+
+    geom_errorbar(aes(x=logMOI,ymin=lower,ymax=upper,color=system),
+                  linewidth=0.2)+
     geom_point(aes(x=logMOI, y=Mean,
                   color=system),
               shape=16)+
     facet_wrap(~Phage, nrow = 1)+
     ylab("AUC")+
-    xlab("MOI(log10)")+
+    xlab("MOI (log10)")+
     theme_classic()+
-    theme(strip.background = element_blank(),
+    scale_x_continuous(breaks=seq(-4,1,1))+
+    theme(axis.text= element_text(family = "ArialMT",size=8),
+          #axis.title = element_blank(),
+          panel.grid.minor = element_blank(),
+          axis.ticks = element_line(color="black",linewidth=0.4),
+          panel.border = element_rect(fill=NA,colour = "black",
+                                      linewidth=0.5,
+                                      linetype = "solid"),
+          panel.background = element_blank(),
+          strip.text.y = element_text(family = "ArialMT",size=8),
+          strip.background = element_blank(),
           strip.text = element_text(face = "bold"))+
-    scale_color_manual(values=legendcolors)+
+    scale_color_manual(values=legendcolors,name="")+
     scale_fill_manual(values=legendcolors)
-  
+    
   return(AUCPlotWithConf)
 }
 
