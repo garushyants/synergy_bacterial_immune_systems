@@ -4,6 +4,7 @@ library(tidyr)
 library(ggplot2)
 library(writexl)
 library(ggpubr)
+library(ggh4x)
 
 path<-getwd()
 setwd(path)
@@ -21,21 +22,18 @@ names(CorrelData)<-c(datasets,"ecoli")
 
 CorelDataDf<-data_frame(id = names(CorrelData), CorrelData) %>%
   unnest(cols = c(CorrelData))
+CorelDataDf$sysA<-ifelse(CorelDataDf$System.I == order(CorelDataDf$System.I,CorelDataDf$System.II)[1],
+                                CorelDataDf$System.I, CorelDataDf$System.II)
+CorelDataDf$sysB<-ifelse(CorelDataDf$System.II == order(CorelDataDf$System.I,CorelDataDf$System.II)[2],
+                                CorelDataDf$System.II, CorelDataDf$System.I)
+
+#####Get in wide format everything that has no pagel calculations
+CorelDataWide<-spread(CorelDataDf[,c(1,5,17,18)],key="id",value="Pagel.p.value")
+PairsNotPresent<-CorelDataWide %>% pivot_longer(cols = 'baci':'pseu') %>%
+  filter(is.na(value))
 
 
 CorelDataDfWithDir<-subset(CorelDataDf, CorelDataDf$Benjamini.Hochberg == "Y")
-##
-#Doing this procedure below to be sure that pairs are in the same order
-CorelDataDfWithDir$sysA<-ifelse(CorelDataDfWithDir$System.I == order(CorelDataDfWithDir$System.I,CorelDataDfWithDir$System.II)[1],
-                               CorelDataDfWithDir$System.I, CorelDataDfWithDir$System.II)
-CorelDataDfWithDir$sysB<-ifelse(CorelDataDfWithDir$System.II == order(CorelDataDfWithDir$System.I,CorelDataDfWithDir$System.II)[2],
-                               CorelDataDfWithDir$System.II, CorelDataDfWithDir$System.I)
-CorelDataDfWithDir$id<-factor(CorelDataDfWithDir$id,
-                          levels=c("ecoli",
-                                   "enter",
-                                   "baci",
-                                   "burk",
-                                   "pseu"))
 
 getsubset<-function(datasets,selectOpDir=F, selectSaDir=F){
   #datasets<-c("ecoli","enter")
@@ -63,20 +61,39 @@ getsubset<-function(datasets,selectOpDir=F, selectSaDir=F){
 
 draw_heatmap<-function(df){
   #df<-Fivep1
-  heatmap<-ggplot(data = df, aes(id,paste(sysA,sysB)))+
+  MissingValues<-subset(PairsNotPresent,
+                        paste(PairsNotPresent$sysA,PairsNotPresent$sysB)%in% df$pair)
+  MissingValues$direction<-rep("No pair",length(MissingValues$sysA))
+  MissingValues$signif<-rep("",length(MissingValues$sysA))
+  colnames(MissingValues)[3]<-c("id")
+  ForHeatmapPlot<-rbind(MissingValues[,c(1:3,5,6)],
+                    df[,c(1,16:19)])
+  #In order to keep the order of the columns uniform
+  ForHeatmapPlot$id<-factor(ForHeatmapPlot$id,
+                               levels=c("ecoli",
+                                        "enter",
+                                        "baci",
+                                        "burk",
+                                        "pseu"))
+  
+  heatmap<-ggplot(data = ForHeatmapPlot, aes(id,interaction(sysB,sysA, sep="&")))+
     geom_tile(color = "#d9d9d9",
               aes(fill = as.factor(direction),
                   width=0.98, height=0.95))+
     # coord_equal(expand=T)+
     geom_text(aes(label=signif),
-              size=3.5,
+              size=2.1,
               color="white",
               vjust=0.8,
               hjust=0.5,
               inherit.aes = TRUE)+
+    guides(
+      y = guide_axis_nested(delim = "&"))+
     geom_vline(xintercept=1.5)+
-    scale_fill_manual(values=c("#35978f","#bf812d"), name="",
-                      labels = c("Mutually exclusive","Co-occuring"))+
+    scale_fill_manual(values=c("-1" = "#35978f","1" = "#bf812d","No pair" = "#d9d9d9"), name="",
+                      labels = c("-1" = "Mutually exclusive","1" = "Co-occuring",
+                                 "No pair" = "No pair"),
+                      na.value = "#d9d9d9")+
     scale_y_discrete(limits=rev, name="")+
     scale_x_discrete(labels = c("E. coli",
                                 "Enterobacteriales",
@@ -85,9 +102,13 @@ draw_heatmap<-function(df){
                                 "Pseudomonadales"), name ="")+
     guides(alpha="none")+
     theme_classic()+
-    theme(axis.text.x = element_text(angle=90,hjust=1,vjust=0.5,
+    theme(axis.text = element_text(family="ArialMT", size=4),
+          legend.text = element_text(family="ArialMT", size=4),
+          legend.key.size = unit(0.15, 'cm'),
+          axis.text.x = element_text(angle=90,hjust=1,vjust=0.5,
                                      face="italic"),
-          plot.margin = unit(c(0, 0, 0, 0), "cm"))
+          plot.margin = unit(c(0, 0, 0, 0), "cm"),
+          ggh4x.axis.nestline = element_line(linewidth = 0.15))
     
   heatmap
   return(heatmap)
@@ -126,9 +147,9 @@ FiveDatasets
 
 ###Save
 ggsave("./figures/Pagel_compare_all_datasets.png",plot=FiveDatasets,
-       height = 20, width = 34, dpi =300, units = "cm")
+       height = 12, width = 19, dpi =300, units = "cm")
 ggsave("./figures/Pagel_compare_all_datasets.svg",plot=FiveDatasets,
-       height = 20, width = 34, dpi =300, units = "cm")
+       height = 12, width = 19, dpi =300, units = "cm")
 
 
 

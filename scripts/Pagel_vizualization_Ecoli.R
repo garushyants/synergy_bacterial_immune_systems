@@ -186,30 +186,31 @@ ResultsToPlot$System.II<-factor(ResultsToPlot$System.II,levels=SystemOrder)
 ####
 #Plot results
 heatmap<-ggplot(data = ResultsToPlot, aes(System.I,System.II))+
-  geom_tile(color = "#d9d9d9",
+  geom_tile(color = "#525252",
+            size=0.07,
             aes(fill = direction, 
             alpha = 1-Pagel.p.value))+
   geom_text(aes(label=Signif),
-            size=4,
             color="white",
+            #color = "#525252",
             vjust=0.8,
             hjust=0.5,
-            inherit.aes = TRUE)+
+            size=2.2)+
   guides(alpha="none")+
   theme_classic()+
   scale_fill_gradient2(high= "#bf812d", mid="white", low="#35978f", name="",
-                       labels= c("Mutually exclusive","","","","Co-occuring"))+
+                       labels= c("Mutually exclusive","","","","Co-occuring"),
+                       na.value = "#525252")+
   #scale_x_discrete(limits = SystemOrder)
-  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5, 
-                                   color = AllClassFilteredColSorted$colors,
-                                   size=12),
-        axis.text.y = element_text(color = AllClassFilteredColSorted$colors,
-                                   size=12),
+  theme(axis.text = element_text(family = "ArialMT",size=6,
+                                 color = AllClassFilteredColSorted$colors),
+        axis.text.x = element_text(angle=90, hjust=1, vjust=0.5),
         axis.title = element_blank(),
-        legend.key.size = unit(0.5, 'cm'))
+        legend.key.size = unit(0.25, 'cm'),
+        legend.text = element_text(family = "ArialMT",size=5))
 heatmap
 
 ggsave("./figures/Ecoli_pagel_heatmap_pagel_0.005.png", plot= heatmap,
-       height = 31, width =35, units ="cm", dpi=200)
+       height = 15.5, width =19, units ="cm", dpi=300)
 ggsave("./figures/Ecoli_pagel_heatmap_pagel_0.005.svg", plot= heatmap,
-       height = 31, width =35, units ="cm", dpi=200)
+       height = 15.5, width =19, units ="cm", dpi=300)
