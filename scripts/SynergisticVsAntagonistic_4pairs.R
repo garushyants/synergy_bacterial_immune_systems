@@ -392,7 +392,7 @@ getPhagePlot<-function(Df,System,mins,adj=T)
               linewidth=0.5)+
     geom_line(data=DfphageLong,
               aes(x=minutes,y=OD,color=system, linetype=as.factor(replicate)),
-              linewidth=1.1)+
+              linewidth=0.5)+
     scale_color_manual(values=c("#5d5e5e","#a54332","#949fa6"))+
 
     ylim(c(0,1.5))+
