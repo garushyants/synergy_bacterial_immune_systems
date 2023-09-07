@@ -188,6 +188,8 @@ ggplot()+
              color="red")+
   theme_classic()
 
+(mean(NotMatching)-RealSum)/sd(NotMatching)
+
 
 
 

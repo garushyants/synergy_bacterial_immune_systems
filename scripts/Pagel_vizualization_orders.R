@@ -17,7 +17,7 @@ folderWithRawData<-"../20230314_pagel_other_datasets/"
 for (dt in datasets) {
   #dt<-datasets[1]
   folderwithmatrices<-paste0(folderWithRawData,"pagel_",dt)
-  defensedata<-paste(folderWithRawData,"merged_",dt,"3.csv",sep="")
+  defensedata<-paste("./data/merged_",dt,"3.csv",sep="")
   treefile<-paste("./data/",dt,"tree_resavediTOL_newick.txt",sep="")
   #merge p-values together and write to the local folder
   system(paste("cat ",folderwithmatrices,"/*.txt > ","./data/",dt,"pagel_fitDiscrete_all.tsv", sep=""))
