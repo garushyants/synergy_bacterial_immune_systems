@@ -128,7 +128,7 @@ generate_graph<-function(dataset)
        vertex.label.cex=log(V(net)$count)/log(max(V(net)$count))/3,
        layout = lay)
   legend(x="bottomleft", c("Mutually exclusive","Co-occuring"), pch=21,
-         col="#777777", pt.bg=dircolors, pt.cex=.8, cex=.8, bty="n", ncol=1)
+         col="#777777", pt.bg=dircolors, pt.cex=.8, cex=.4, bty="n", ncol=1)
   dev.off()
 }
 
