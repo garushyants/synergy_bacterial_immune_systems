@@ -97,6 +97,7 @@ generate_graph<-function(dataset)
   E(net)$color <- dircolors[E(net)$direction]
   V(net)$size <-log(V(net)$count)/log(max(V(net)$count))*10+1
   E(net)$width<-E(net)$weight/max(E(net)$weight)*5+0.5
+  E(net)$lty<-ifelse(E(net)$type == "BH",3,1)
   
   # lay<-layout_with_fr(net,
   #                     weights = log2(E(net)$width),
