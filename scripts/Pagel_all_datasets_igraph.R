@@ -95,8 +95,8 @@ generate_graph<-function(dataset)
   dircolors <- c("#35978f","#bf812d")
   names(dircolors)<-c("-1","1")
   E(net)$color <- dircolors[E(net)$direction]
-  V(net)$size <-log(V(net)$count)/log(max(V(net)$count))*10+1
-  E(net)$width<-E(net)$weight/max(E(net)$weight)*5+0.5
+  V(net)$size <-log(V(net)$count)/log(max(V(net)$count))*9
+  E(net)$width<-E(net)$weight/max(E(net)$weight)*3+0.5
   E(net)$lty<-ifelse(E(net)$type == "BH",3,1)
   
   # lay<-layout_with_fr(net,
@@ -110,10 +110,10 @@ generate_graph<-function(dataset)
        vertex.label.family="ArielMT",
        vertex.frame.color = "#c7e9b4",
        vertex.color ="#ffffd9",
-       vertex.label.cex=log(V(net)$count)/log(max(V(net)$count))/3,
+       vertex.label.cex=log(V(net)$count)/log(max(V(net)$count))/3.5,
        layout = layout_in_circle)
   legend(x="bottomleft", c("Mutually exclusive","Co-occuring"), pch=21,
-         col="#777777", pt.bg=dircolors, pt.cex=.8, cex=.8, bty="n", ncol=1)
+         col="#777777", pt.bg=dircolors, pt.cex=.8, cex=.4, bty="n", ncol=1)
   dev.off()
   #######
   lay<-layout_with_fr(net,
