@@ -66,7 +66,7 @@ SegmentsCoveragePlot<-ggplot()+geom_rect(data=MAFForPlotWide, mapping=aes(xmin=a
                                                     ymin=0,ymax=count*100/max(count),
                                                     alpha = count),
                                          fill= "#bf812d")+
-  scale_x_continuous(limits=c(-100,200000), expand =c(0.01,0))+
+  scale_x_continuous(limits=c(-100,190605), expand =c(0.01,0))+
   scale_alpha_continuous(range=c(0.2,1))+
   ylab("Frequency")+
   theme_classic()+
@@ -94,7 +94,7 @@ genecolors<-c("#6a51a3","#d9d9d9","#7fbf7b","#9ecae1")
 
 GenesPlot<-ggplot(preGFFProducts, aes(xmin = V4, xmax = V5,
                            forward = orientation)) +
-  geom_hline(yintercept = 1)+
+  geom_hline(yintercept = 1,color = "#969696")+
   geom_gene_arrow(aes(y = yaxis,fill=systemlabel,color=systemlabel))+
   scale_fill_manual(values=genecolors)+
   scale_color_manual(values=genecolors)+
@@ -104,7 +104,7 @@ GenesPlot<-ggplot(preGFFProducts, aes(xmin = V4, xmax = V5,
                   direction = "x")+
   #geom_vline(xintercept = c(177174,179746), color = "#af8dc3")+ #Gabaja
   #geom_vline(xintercept = c(180845,184639), color = "#7fbf7b")+ #tmn
-  scale_x_continuous(limits=c(-100,200000),
+  scale_x_continuous(limits=c(-100,190605),
                      breaks=seq(0,200000,50000),
                      labels=seq(0,200,50),
                      expand =c(0.01,0))+
