@@ -3,6 +3,7 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(gggenes)
+library(ggrepel)
 library(ggpubr)
 library(writexl)
 
@@ -62,13 +63,17 @@ write_xlsx(MAFForPlotWide, "../data/cactus_plasmids/104_plasmids_MAF_segments_cu
 #Do segments plot
 SegmentsCoveragePlot<-ggplot()+geom_rect(data=MAFForPlotWide, mapping=aes(xmin=as.numeric(start),
                                                     xmax=as.numeric(end),
-                                                    ymin=0,ymax=count,
+                                                    ymin=0,ymax=count*100/max(count),
                                                     alpha = count),
                                          fill= "#bf812d")+
-  scale_x_continuous(limits=c(-100,190650))+
+  scale_x_continuous(limits=c(-100,200000), expand =c(0.01,0))+
   scale_alpha_continuous(range=c(0.2,1))+
+  ylab("Frequency")+
   theme_classic()+
-  theme(legend.position = "none")
+  theme(legend.position = "none",
+        axis.text.x = element_blank(),
+        axis.line.x = element_blank(),
+        axis.ticks.x=element_blank())
 SegmentsCoveragePlot
 ###################################
 #load gene data
@@ -83,61 +88,72 @@ preGFFProducts$orientation<-ifelse(preGFFProducts$V7=="-", F,T)
 
 ###add gene colors
 preGFFProducts$systemlabel<-c(rep("gene",182),"Gabaja","Gabaja","vap","vap","tmn",rep("gene",9))
-preGFFProducts$genelabels<-c(rep("",182),"gajB","gajA","vapC","vapB","tmn",rep("",9))
+preGFFProducts$genelabels<-c(rep(NA,182),"gajB","gajA","vapC","vapB","tmn",rep(NA,9))
+preGFFProducts$yaxis<-rep(1,length(preGFFProducts$molecule))
 genecolors<-c("#6a51a3","#d9d9d9","#7fbf7b","#9ecae1")
 
-GenesPlot<-ggplot(preGFFProducts, aes(xmin = V4, xmax = V5, y = molecule,
-                           forward = orientation,
-                           fill=systemlabel,
-                           color=systemlabel)) +
-  geom_gene_arrow()+
-  ylab("")+
+GenesPlot<-ggplot(preGFFProducts, aes(xmin = V4, xmax = V5,
+                           forward = orientation)) +
+  geom_hline(yintercept = 1)+
+  geom_gene_arrow(aes(y = yaxis,fill=systemlabel,color=systemlabel))+
   scale_fill_manual(values=genecolors)+
   scale_color_manual(values=genecolors)+
+  geom_text_repel(aes(x=V4,y=yaxis-0.05, label=genelabels),
+                  nudge_y = -0.3,
+                  segment.size=0.15,
+                  direction = "x")+
   #geom_vline(xintercept = c(177174,179746), color = "#af8dc3")+ #Gabaja
   #geom_vline(xintercept = c(180845,184639), color = "#7fbf7b")+ #tmn
-  scale_x_continuous(limits=c(-100,190650))+
+  scale_x_continuous(limits=c(-100,200000),
+                     breaks=seq(0,200000,50000),
+                     labels=seq(0,200,50),
+                     expand =c(0.01,0))+
+  scale_y_continuous(limits = c(0.6,1.1),
+                     breaks = c(1),
+                     labels = c("CP083423.1"),
+                     expand = c(0,0))+
   theme_classic()+
+  ylab("")+
+  xlab("Distance (kb)")+
   theme(legend.position = "none",
-        axis.text.x = element_blank(),
-        axis.line = element_blank(),
-        axis.ticks.x=element_blank())
+        axis.line.y = element_blank(),
+        axis.text = element_text(family = "ArielMT"))
 GenesPlot
 
 #save full
 ##
-##
-PlotToSave<-ggarrange(GenesPlot,
-                      SegmentsCoveragePlot,
+PlotToSave<-ggarrange(SegmentsCoveragePlot,
+                      GenesPlot,
                       ncol =1,
-                      heights=c(1,1),
+                      heights=c(2,0.9),
                       hjust=0.5,
                       align = "v")
 PlotToSave
 
-ggsave("CP083423.1_cactus_coverage_strict_20230612.png", plot = PlotToSave,
-       height =7, width =35, units = "cm", dpi=300)
-ggsave("CP083423.1_cactus_coverage_strict_20230612.svg", plot = PlotToSave,
-       height =7, width =35, units = "cm", dpi=300)
+ggsave("../figures/tmn_Gabija_plasmids/CP083423.1_cactus_coverage_strict_20230612.png", plot = PlotToSave,
+       height =9, width =35, units = "cm", dpi=300)
+ggsave("../figures/tmn_Gabija_plasmids/CP083423.1_cactus_coverage_strict_20230612.svg", plot = PlotToSave,
+       height =9, width =35, units = "cm", dpi=300)
 
 ###
 #Zoom on common segments
 SegmentsLimits<-c(168930,190606)
-GenesPlotZoom<-ggplot(data=preGFFProducts, aes(xmin = V4, xmax = V5, y = molecule,
+GenesPlotZoom<-ggplot(data=preGFFProducts, aes(xmin = V4, xmax = V5, y = yaxis,
                                       forward = orientation,
                                       fill=systemlabel)) +
-  geom_hline(yintercept = "CP083423.1", color = "#969696",
-             linewidth=1.2)+
+  geom_hline(yintercept = 1,color = "#969696")+
   geom_gene_arrow(color="#969696")+
-  geom_text(aes(x=V5-((V5-V4)/2), y=1.1,label=genelabels),
-            angle=35,
-            vjust=0.5,
-            hjust=-0.3,
+  geom_text_repel(aes(x=V4+(V5-V4)/2, label=genelabels),
+            direction = "x",
+            nudge_y = 0.1,
             size=4)+
   ylab("")+
   xlab("")+
   scale_fill_manual(values=genecolors)+
   scale_x_continuous(limits=SegmentsLimits)+
+  scale_y_continuous(limits=c(0.95,1.2),
+                     breaks = c(1),
+                     labels = c("CP083423.1"))+
   theme_classic()+
   theme(legend.position = "none",
         axis.text.x = element_blank(),
@@ -152,13 +168,13 @@ SegmentsCoveragePlotZoom<-SegmentsCoveragePlot+ scale_x_continuous(limits=Segmen
 PlotToSaveZoom<-ggarrange(GenesPlotZoom,
           SegmentsCoveragePlotZoom,
           ncol =1,
-          heights=c(1,1),
+          heights=c(1,2),
           align = "v")
 PlotToSaveZoom
 
-ggsave("CP083423.1_cactus_coverage_strict_zoom_20230612.png", plot = PlotToSaveZoom,
+ggsave("../figures/tmn_Gabija_plasmids/CP083423.1_cactus_coverage_strict_zoom_20230612.png", plot = PlotToSaveZoom,
        height =8, width =35, units = "cm", dpi=300)
-ggsave("CP083423.1_cactus_coverage_strict_zoom_20230612.svg", plot = PlotToSaveZoom,
+ggsave("../figures/tmn_Gabija_plasmids/CP083423.1_cactus_coverage_strict_zoom_20230612.svg", plot = PlotToSaveZoom,
        height =8, width =35, units = "cm", dpi=300)
 
 
