@@ -187,7 +187,7 @@ p2upd<- pupd %<+% AlltipsCorrectNames +
 #   geom_tiplab2(aes(label=selected_strains))
 # pTLab
 
-ggsave("../figures/phylogenetic_trees/Ecoli_tree_with_phylogroups.png",
+ggsave("../figures/Ecoli_phylogenetic_trees/Ecoli_tree_with_phylogroups.png",
        plot=p2upd, width = 35, height=35, units = "cm", dpi=300)
 
 
@@ -262,9 +262,9 @@ DrawSubsample<-function(genomes)
 GenomeSubsample<-sample(unique(EcoliDefenseFiltRestructured$genome),750)
 Treesub750<-DrawSubsample(GenomeSubsample)
 Treesub750
-ggsave("../figures/phylogenetic_trees/Ecoli_tree_with_phylogroups_and_DefSystems_20230614_subsample750.png",
+ggsave("../figures/Ecoli_phylogenetic_trees/Ecoli_tree_with_phylogroups_and_DefSystems_20230614_subsample750.png",
        plot=Treesub750, width = 35, height=35, units = "cm", dpi=300)
-ggsave("../figures/phylogenetic_trees/Ecoli_tree_with_phylogroups_and_DefSystems_20230614_subsample750.svg",
+ggsave("../figures/Ecoli_phylogenetic_trees/Ecoli_tree_with_phylogroups_and_DefSystems_20230614_subsample750.svg",
        plot=Treesub750, width = 35, height=35, units = "cm", dpi=300)
 
 ######################
@@ -275,7 +275,7 @@ CompleteSubsample<-sample(AssemblySummaryFilteredComplete$assembly_accession, 75
 TreeCompl750<-DrawSubsample(CompleteSubsample)
 TreeCompl750
 
-ggsave("../figures/phylogenetic_trees/Ecoli_tree_with_phylogroups_and_DefSystems_20230614_Complete750.png",
+ggsave("../figures/Ecoli_phylogenetic_trees/Ecoli_tree_with_phylogroups_and_DefSystems_20230614_Complete750.png",
        plot=TreeCompl750, width = 35, height=35, units = "cm", dpi=300)
-ggsave("../figures/phylogenetic_trees/Ecoli_tree_with_phylogroups_and_DefSystems_20230614_Complete750.svg",
+ggsave("../figures/Ecoli_phylogenetic_trees/Ecoli_tree_with_phylogroups_and_DefSystems_20230614_Complete750.svg",
        plot=TreeCompl750, width = 35, height=35, units = "cm", dpi=300)
