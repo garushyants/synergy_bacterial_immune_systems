@@ -163,6 +163,43 @@ ggsave("../figures/Ecoli_phylogroups/SystemsByPhylogroup_LongPlot_raw_cutoff005.
 ggsave("../figures/Ecoli_phylogroups/SystemsByPhylogroup_LongPlot_raw_cutoff005.svg", plot=LongRawToSave,
        width=30, height = 28, units="cm",dpi=300)
 
+###########
+#Do statistical tests for selected systems
+#The important value to report is effect size
+do_chisquare<-function(system)
+{
+  #system<-"Druantia III"
+  SysLong<-subset(ForPlotRaw, ForPlotRaw$defense_system == system)
+  SysLong$absent<-SysLong$total-SysLong$systemtotal
+  
+  #Do Chi-Squared test for homogeneity
+  data.table<-rbind(system=SysLong$systemtotal,absent=SysLong$absent)
+  #data.table2<-rbind(sysperc=SysLong$perc, absperc=(100-SysLong$perc))
+  TestRes<-chisq.test(data.table,
+                      simulate.p.value = T)
+  Effectsize<-TestRes$observed[1,]/TestRes$expected[1,]
+  names(Effectsize)<-SysLong$id
+  return(c(def_sys=system,TestRes$statistic,p.value=TestRes$p.value,Effectsize))
+
+}
+
+# Retron I-C and AbiE in B2-1
+# CRISPR I F, Thoeris and Septu gatABCD in B2-2
+# BREX I in C
+# Zorya II and Druantia III in E1,E2
+# PsyrTA in E2
+# RM IV reduction in E2 and increase in RM IIG in E2
+
+write.csv(rbind(do_chisquare("Zorya II"),
+do_chisquare("Druantia III"),
+do_chisquare("Retron I-C"),
+do_chisquare("AbiE"),
+do_chisquare("BREX I"),
+do_chisquare("PsyrTA"),
+do_chisquare("RM IV"),
+do_chisquare("RM IIG")),"../data/Ecoli_phylogroups/chisquared_systems_difference.csv",
+quote = F, row.names = F)
+
 #########
 ##Add info about location
 
