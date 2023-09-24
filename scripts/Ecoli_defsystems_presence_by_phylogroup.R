@@ -176,24 +176,21 @@ do_chisquare<-function(system)
   data.table<-rbind(system=SysLong$systemtotal,absent=SysLong$absent)
   #data.table2<-rbind(sysperc=SysLong$perc, absperc=(100-SysLong$perc))
   TestRes<-chisq.test(data.table,
-                      simulate.p.value = T)
+                      simulate.p.value = T,
+                      B=2000)
   Effectsize<-TestRes$observed[1,]/TestRes$expected[1,]
   names(Effectsize)<-SysLong$id
   return(c(def_sys=system,TestRes$statistic,p.value=TestRes$p.value,Effectsize))
 
 }
 
-# Retron I-C and AbiE in B2-1
-# CRISPR I F, Thoeris and Septu gatABCD in B2-2
-# BREX I in C
-# Zorya II and Druantia III in E1,E2
-# PsyrTA in E2
-# RM IV reduction in E2 and increase in RM IIG in E2
-
 write.csv(rbind(do_chisquare("Zorya II"),
 do_chisquare("Druantia III"),
 do_chisquare("Retron I-C"),
 do_chisquare("AbiE"),
+do_chisquare("CRISPR I-F"),
+do_chisquare("Thoeris I"),
+do_chisquare("Septu I"),
 do_chisquare("BREX I"),
 do_chisquare("PsyrTA"),
 do_chisquare("RM IV"),
