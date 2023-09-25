@@ -14,10 +14,9 @@ library(writexl)
 
 path<-getwd()
 setwd(path)
-setwd("../20230427_distances_on_genome/")
 
 ###Create folder to store results
-folderForOutput<-"results20230610"
+folderForOutput<-"../figures/cooccurence_vs_genome_distance"
 
 if (!dir.exists(folderForOutput)){
   dir.create(folderForOutput)
@@ -29,7 +28,7 @@ if (!dir.exists(folderForOutput)){
 ###Compile data
 
 ###read Pagel results for E. coli dataset
-Pagel_results<-read_xlsx("Ecoli_pagel_rescaled_all_results_20230329.xlsx")
+Pagel_results<-read_xlsx("../data/Ecoli_pagel_all_results_with_direction.xlsx")
 
 Pagel_results$pair<-paste(Pagel_results$System.I,
                                     Pagel_results$System.II)
@@ -47,21 +46,21 @@ Pagel_results_signifNeg<-subset(Pagel_results, (Pagel_results$Bonferroni=="Y" &
 #We work later on with Enterobacteriales dataset, in particular
 #with subset of full E.coli genomes, Shigellas are considered E.coli
 ###Read main file with data
-SystemsLocation<-read.csv("merged_enter3.csv", header=T)
+SystemsLocation<-read.csv("../data/merged_enter3.csv", header=T)
 ###Get final tree for Enterobacteriales to get read of contaminated and strange genomes
-tree <- read.tree("entertree_resavediTOL_newick.txt")
+tree <- read.tree("../data/entertree_resavediTOL_newick.txt")
 tipnames<-tree$tip.label
 ###read Genbank assembly summary to filter E.coli from whole Enterobacteriales dataset 
-AssemblySummary<-read.csv("Escherichia_assembly_summary_genbank.txt", header = F,
+AssemblySummary<-read.csv("../data/cooccurence_vs_genome_distance//Escherichia_assembly_summary_genbank.txt", header = F,
                           sep="\t")
 #remove contaminated
 SystemsLocationNoCont<-subset(SystemsLocation, SystemsLocation$genome %in% tipnames)
 
 
 #################################
-###Because chromosomes are circular I need to know all contigs lengths to be able to calculate distances correctly
+###Because chromosomes are circular we need to know all contigs lengths to be able to calculate distances correctly
 ###This lengths are precalculated from fasta files with awk oneliner 
-ChromosomeLengths<-read.csv("../20230215_download_genomes/enter_genomes_chromosome_lengths.tsv",
+ChromosomeLengths<-read.csv("../data/cooccurence_vs_genome_distance/enter_genomes_chromosome_lengths.tsv",
                             header = F, sep="\t")
 ChromosomeLengthsSep<-separate(ChromosomeLengths,V1,into = c("seqid","description"),sep = " ",extra = "merge")
 #In addition get info about location on plasmid
@@ -82,9 +81,9 @@ SystemsLocationEcoli<-subset(DefSystemsWithChrInfo, DefSystemsWithChrInfo$genome
 #################################
 #Read data from E.coli dataset to compare results
 ###systems
-Ecoli26KSystemsLocation<-read.csv("complete_prophage_platon_26k_all7.csv", header=T)
+Ecoli26KSystemsLocation<-read.csv("../data/26k_Ecoli_with_prophages.csv", header=T)
 #tree
-Ecoli26ktree <- read.tree("Ecoli_tree_rapidnj.rM2.treeshrink_corrected.nwk")
+Ecoli26ktree <- read.tree("../data/Ecoli_tree_rapidnj.rM2.treeshrink_corrected.nwk")
 Finaltips<-gsub(".fna","",Ecoli26ktree$tip.label)
 Ecoli26KSystemsLocationFiltered<-subset(Ecoli26KSystemsLocation, 
                                         Ecoli26KSystemsLocation$genome %in% Finaltips)
@@ -114,7 +113,10 @@ ChrVsPlsmPlot
 ggsave("EcoliComplete_ChromosmeVsPlasmid.png",
        plot=ChrVsPlsmPlot, path=folderForOutput,
        width=40, height=13, dpi=300, units="cm")
-
+ggsave("EcoliComplete_ChromosmeVsPlasmid.svg",
+       plot=ChrVsPlsmPlot, path=folderForOutput,
+       width=40, height=13, dpi=300, units="cm")
+  
 ###Draw the same for 26k Ecoli
 
 Ecoli26kChrVsPlsmPlot<-ggplot(Ecoli26KSystemsLocationFiltered)+
@@ -135,6 +137,9 @@ Ecoli26kChrVsPlsmPlot
 ggsave("Ecoli26k_ChromosmeVsPlasmid.png",
        plot=Ecoli26kChrVsPlsmPlot, path=folderForOutput,
        width=40, height=13, dpi=300, units="cm")
+ggsave("Ecoli26k_ChromosmeVsPlasmid.svg",
+       plot=Ecoli26kChrVsPlsmPlot, path=folderForOutput,
+       width=40, height=13, dpi=300, units="cm")
 
 ###check the same plasmid thing for the whole Enterobacteriales dataset
 EnterChrVsPlsmPlot<-ggplot(DefSystemsWithChrInfo)+
@@ -152,10 +157,10 @@ EnterChrVsPlsmPlot<-ggplot(DefSystemsWithChrInfo)+
 EnterChrVsPlsmPlot
 #behavior is similar but systems on chromosomes are more rare except for RMs
 
-
-ggsave("Enterobacteriales_ChromosmeVsPlasmid.png",
-       plot=EnterChrVsPlsmPlot, path=folderForOutput,
-       width=40, height=13, dpi=300, units="cm")
+# 
+# ggsave("Enterobacteriales_ChromosmeVsPlasmid.png",
+#        plot=EnterChrVsPlsmPlot, path=folderForOutput,
+#        width=40, height=13, dpi=300, units="cm")
 
 ####Check how often systems are within prophages for 26k E.coli dataset 
 ####for which we have such data
@@ -174,9 +179,9 @@ Ecoli26kChrVsPrPhPlot
 #pure prophages are rare
 #BstA is interesting in this sense
 #and also ietAS sometimes close
-ggsave("Ecoli26k_ChromosmeVsProphage.png",
-       plot=Ecoli26kChrVsPrPhPlot, path=folderForOutput,
-       width=40, height=13, dpi=300, units="cm")
+# ggsave("Ecoli26k_ChromosmeVsProphage.png",
+#        plot=Ecoli26kChrVsPrPhPlot, path=folderForOutput,
+#        width=40, height=13, dpi=300, units="cm")
 
 
 ###################################################
@@ -215,8 +220,6 @@ NearestDistancesNoDupl<-NearestDistancesShort[!duplicated(NearestDistancesShort)
 NearestDistancesClean<-subset(NearestDistancesNoDupl, !is.na(NearestDistancesNoDupl$mindist) &
                                 !(NearestDistancesNoDupl$pairOrdered %in% c(Pagel_results_signifPos$pair,
                                                                       Pagel_results_signifPos$pairrev)))
-#############!!!!!Check again it seems that I am missing distances for first element in each first element
-
 
 
 #Distance to nearest characterized system in dataset
@@ -225,11 +228,16 @@ Allp1<-ggplot(NearestDistancesClean, aes(x=mindist,
   geom_histogram(bins=100,
                  alpha = 0.7, fill = "#023858",color = "#023858")+
   geom_vline(xintercept=median(NearestDistancesClean$mindist),
-             color="dark green", alpha=.6)+
+             color="#bd0026",
+             linewidth=1.5)+
   ylab("% of all distances")+
-  xlab("distance")+
+  xlab("Distance (bp)")+
+  ggtitle("All")+
   scale_x_continuous(limits= c(-30000,2000000))+
-  theme_bw()
+  theme_classic()+
+  theme(axis.text = element_text(family="ArielMT", size=12),
+        axis.title = element_text(family = "ArielMT"),
+        title = element_text(family="ArielMT"))
 Allp1
 ##############################################################
 ################Get distances for pairs
@@ -267,19 +275,25 @@ DistancesListOfDFs<-apply(Pagel_results_signifPos, 1, function(a) getPairDistanc
 PairDistancesDf<-do.call("rbind",DistancesListOfDFs)
 PairDistancesDf$pair<-paste(PairDistancesDf$System.II,
                             PairDistancesDf$System.I)
-write_xlsx(PairDistancesDf, path=paste(folderForOutput,"/Distances_between_positive_significant_pairs.xlsx",sep=""))
+# write_xlsx(PairDistancesDf, path=paste(folderForOutput,"/Distances_between_positive_significant_pairs.xlsx",sep=""))
 
 #Draw all systems together
-AllPairsPlotp1<-ggplot(PairDistancesDf, aes(x=distance,color=pair,fill=pair,
+AllPairsPlotp1<-ggplot(PairDistancesDf, aes(x=distance,
                                          after_stat(count*100/sum(count))))+
   geom_histogram(bins=100,
-                 alpha = 0.4)+
+                 alpha = 0.7,
+                 fill = "#023858",color = "#023858")+
   geom_vline(xintercept=median(PairDistancesDf$distance),
-             color="dark green", alpha=.4)+
+             color="#bd0026",
+             linewidth=1.5)+
   ylab("% of all distances")+
+  xlab("Distance (bp)")+
+  ggtitle("Co-occuring pairs")+
   scale_x_continuous(limits= c(-30000,2000000))+
-  theme_bw()+
-  theme(legend.position = "none")
+  theme_classic()+
+  theme(axis.text = element_text(family="ArielMT", size=12),
+        axis.title = element_text(family = "ArielMT"),
+        title = element_text(family="ArielMT"))
 AllPairsPlotp1
 
 AllPairsPlotCombined<-ggarrange(Allp1,
@@ -292,11 +306,15 @@ ggsave("EcoliEnterAllPositive_vs_allclosest.png",
        path=folderForOutput,
        AllPairsPlotCombined, width=20, height=15, units="cm",
        dpi=300)
+ggsave("EcoliEnterAllPositive_vs_allclosest.svg",
+       path=folderForOutput,
+       AllPairsPlotCombined, width=20, height=15, units="cm",
+       dpi=300)
 
 
 NearestDistancesClean$pair<-rep(" All", length(NearestDistancesClean$seqid))
 
-write_xlsx(NearestDistancesClean, path=paste(folderForOutput,"/Distances_to_closest_system_control_All.xlsx", sep=""))
+# write_xlsx(NearestDistancesClean, path=paste(folderForOutput,"/Distances_to_closest_system_control_All.xlsx", sep=""))
 
 ###Ploting distribution of distances
 LongPlot<-ggplot()+
@@ -305,23 +323,29 @@ LongPlot<-ggplot()+
                                                  fill=pair),
               fill = "#023858")+
   geom_vline(xintercept=median(NearestDistancesClean$mindist),
-             color="dark green", alpha=.4)+
+             color="#bd0026",
+             linewidth=1.5, alpha=.4)+
   geom_boxplot(data=PairDistancesDf, 
               aes(x=distance,
                   y=pair,
                   fill= pair))+
   xlim(c(-10000,500000))+
+  xlab("Distance (bp)")+
   theme_bw()+
-  theme(legend.position = "none")
+  theme(legend.position = "none",
+        axis.text = element_text(family="ArielMT", size=12),
+        axis.title = element_text(family = "ArielMT"))
 LongPlot
 
 ggsave("EcoliEnter_AllPositive_long_barplot.png",
        path=folderForOutput,
+       LongPlot, width=20, height=40, units="cm",
+       dpi=300)
+ggsave("EcoliEnter_AllPositive_long_barplot.svg",
+       path=folderForOutput,
        LongPlot, width=10, height=40, units="cm",
        dpi=300)
 #There can be any distances, but there are systems that are located close to each other
-
-#How to look into that?
 
 #Check whick pairs are close..
 #some indeed are
@@ -333,7 +357,7 @@ SystemsSignif<-subset(SystemsMedian, SystemsMedian$test*length(SystemsMedian$Sys
                         SystemsMedian$count > 10)
 
 ##save to file
-write_xlsx(SystemsSignif, path=paste(folderForOutput,"PositiveSystemsSignifCloser.xlsx", sep="/"))
+write_xlsx(SystemsSignif, path=paste("../data/cooccurence_vs_genome_distance/PositiveSystemsSignifCloser.xlsx", sep="/"))
 
 ForPlotSubset<-subset(PairDistancesDf, paste(PairDistancesDf$System.I,PairDistancesDf$System.II) %in% 
                         paste(SystemsSignif$System.I,SystemsSignif$System.II))
@@ -349,10 +373,10 @@ p2<-ggplot(ForPlotSubset,
   theme(legend.position = "none")
 p2
 
-ggsave("EcoliEnter_ByPositiveSystem_signifless.png",
-       path=folderForOutput,
-       p2, width=20, height=20, units="cm",
-       dpi=300)
+# ggsave("EcoliEnter_ByPositiveSystem_signifless.png",
+#        path=folderForOutput,
+#        p2, width=20, height=20, units="cm",
+#        dpi=300)
 
 #Do I have to plot on the tree for tmn Gabija and Druantia III Zorya II
 #where those are found
@@ -433,8 +457,6 @@ for (i in 1:nrow(SystemsSignif))
          width=30,height=40,dpi =400,units="cm")
 }
 
-#################################################
-#################################################
 
 
 

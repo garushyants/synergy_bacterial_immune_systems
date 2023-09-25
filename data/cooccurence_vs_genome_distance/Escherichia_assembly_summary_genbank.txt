@@ -1,0 +1,1 @@
+../../../20230427_distances_on_genome/Escherichia_assembly_summary_genbank.txt
