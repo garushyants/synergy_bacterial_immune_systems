@@ -5,9 +5,9 @@ Contain scripts to reproduce the analysis and vizualize data
 
 *Ecoli_numContigs_vc_numDefence.R* builds correlation between number of contigs in genome and number of predicted immune systems
 
-Scripts *Ecoli26k_tree_phylogroups_defense_systems.R* and *Visualize_phylogenetic_trees_orders.R* visualize phylognetic trees and add data to them.
+Scripts *Ecoli26k_tree_phylogroups_defense_systems.R* and *Visualize_phylogenetic_trees_orders.R* visualize phylognetic trees and add data to them
 
-*Ecoli_defsystems_presence_by_phylogroup.R* allows to analyze immune systems content in E. coli phylogroups and also performs enrichment analysis.
+*Ecoli_defsystems_presence_by_phylogroup.R* allows to analyze immune systems content in E. coli phylogroups and also performs enrichment analysis
 
 *defense_systems_content_vs_phylogenetic_distance.R* builds correlations between immune systems content and phylogenetic distance
 
