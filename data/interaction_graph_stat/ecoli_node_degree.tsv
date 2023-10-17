@@ -1,0 +1,72 @@
+System	MutExclusive.B	Co-occuring.B	MutExclusive.BH	Co-occuring.BH
+3HP	NA	1	1	4
+AbiD	2	1	8	1
+AbiE	5	12	12	22
+AbiH	1	1	3	2
+AbiL	NA	NA	3	3
+AbiQ	1	4	3	6
+AbiU	NA	NA	2	6
+AVAST II	1	NA	3	1
+AVAST IV	1	NA	3	2
+BREX I	4	3	7	5
+BstA	NA	2	4	6
+cas_adaptation	1	2	7	3
+CBASS I	4	6	10	13
+CBASS II	NA	3	2	3
+CRISPR I-E	11	19	15	26
+CRISPR I-F	NA	1	1	7
+darTG	NA	2	NA	5
+dCTPdeaminase	NA	5	2	6
+Dnd_ABCDE	2	3	9	9
+Dnd_FGH	3	4	6	9
+Dpd	9	7	10	8
+DprA-PRTase	NA	4	NA	5
+DRT I	3	1	5	2
+DRT II	NA	NA	2	1
+DRT III	1	4	5	7
+Druantia I	NA	NA	3	1
+Druantia III	6	8	12	9
+dsr I	NA	1	NA	1
+dXTPase	1	2	4	8
+Gabija	2	4	4	11
+GAO_19	NA	3	2	6
+GAO_29	NA	2	2	3
+gop_beta_cll	NA	NA	4	1
+Hachiman I	3	1	9	2
+Helicase-DUF2290	NA	2	NA	5
+hhe	2	7	3	10
+ietAS	4	3	4	7
+Kiwa	NA	1	1	7
+Lamassu I	NA	1	NA	2
+Lit	1	3	1	3
+Mokosh II	3	9	12	13
+mza	NA	4	3	4
+old	NA	3	NA	4
+PARIS	NA	3	3	5
+PifA	NA	2	1	7
+ppl	NA	4	NA	9
+PrrC	NA	2	NA	6
+PsyrTA	10	9	23	15
+Pycsar	NA	NA	NA	2
+qatABCD	NA	1	1	1
+Retron I-A	NA	1	NA	3
+Retron I-B	NA	NA	1	2
+Retron I-C	3	5	12	7
+Retron II-A	NA	NA	2	3
+Retron IV	NA	1	2	2
+Retron V	NA	4	NA	5
+Retron XII	NA	2	3	8
+RexAB	1	3	2	5
+RM I	9	14	12	16
+RM II	3	6	6	9
+RM IIG	3	3	8	6
+RM III	5	4	9	5
+RM IV	11	12	17	16
+Septu I	3	6	11	12
+Shedu	NA	3	NA	3
+SoFic	2	3	3	5
+SspABCD	NA	NA	NA	1
+Thoeris I	2	2	6	7
+tmn	NA	2	1	6
+Zorya I	2	2	3	7
+Zorya II	5	3	7	6

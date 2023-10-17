@@ -62,7 +62,7 @@ SystemCountsDf<-RawDataDf[,c("id","genome","defense_system2")] %>%
 #generate graph for each dataset
 generate_graph<-function(dataset)
 {
-  # dataset<-"enter"
+  dataset<-"ecoli"
   # layparam<-0.0000001
   DatasetCorelDf<-subset(CorelDataDf,CorelDataDf$id == dataset &
                            CorelDataDf$Benjamini.Hochberg =="Y")
@@ -81,6 +81,31 @@ generate_graph<-function(dataset)
   }
   DatasetCorelDf$CooccurCounts<-apply(DatasetCorelDf[,c("sysA","sysB")],MARGIN=1,count_coocurrences)
   
+  # ######Getting data counts
+  # ###Get co-occurrences and total system counts in one table
+  # InteractionToSave<-DatasetCorelDf[,c(2:4,16,10,11,20,5:9)]
+  # write.table(InteractionToSave,
+  #             file="./data/interaction_graph_stat/ecoli_edges_descriptions.tsv",
+  #             row.names = F,
+  #             quote =F,
+  #             sep = "\t")
+  # 
+  # ####calculate the degrees of nodes in the graph
+  # nodesalllong<-data.frame(sys=c(DatasetCorelDf$sysA,
+  #                                DatasetCorelDf$sysB),
+  #                          signif=rep(DatasetCorelDf$signif,2),
+  #                          dir=rep(DatasetCorelDf$direction,2))
+  # nodesdegreelongAllsig<-nodesalllong %>% group_by(sys,dir)%>%
+  #   summarize(count=n())
+  # nodedegreeBH<-spread(nodesdegreelongAllsig,key=dir,value = count)
+  # nodesdegreelongBsig<-nodesalllong[nodesalllong$signif=="B",] %>% group_by(sys,dir)%>%
+  #   summarize(count=n())
+  # nodedegreeB<-spread(nodesdegreelongBsig,key=dir,value = count)
+  # NodeDegreeFull<-merge(nodedegreeB,nodedegreeBH, by = "sys",all = T)
+  # colnames(NodeDegreeFull)<-c("System","MutExclusive.B","Co-occuring.B",
+  #                             "MutExclusive.BH","Co-occuring.BH")
+  # write.table(NodeDegreeFull,file="./data/interaction_graph_stat/ecoli_node_degree.tsv",
+  #             sep="\t",row.names = F, quote =F)
   ########
   edges<-DatasetCorelDf[,c("sysA","sysB","direction","signif","CooccurCounts")]
   edges$direction<-as.character(edges$direction)

@@ -178,9 +178,9 @@ do_chisquare<-function(system)
   TestRes<-chisq.test(data.table,
                       simulate.p.value = T,
                       B=2000)
-  Effectsize<-TestRes$observed[1,]/TestRes$expected[1,]
-  names(Effectsize)<-SysLong$id
-  return(c(def_sys=system,TestRes$statistic,p.value=TestRes$p.value,Effectsize))
+  OddsRatio<-TestRes$observed[1,]/TestRes$expected[1,]
+  names(OddsRatio)<-SysLong$id
+  return(c(def_sys=system,TestRes$statistic,p.value=TestRes$p.value,OddsRatio))
 
 }
 
