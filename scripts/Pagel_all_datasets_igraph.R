@@ -62,7 +62,7 @@ SystemCountsDf<-RawDataDf[,c("id","genome","defense_system2")] %>%
 #generate graph for each dataset
 generate_graph<-function(dataset)
 {
-  dataset<-"ecoli"
+  #dataset<-"ecoli"
   # layparam<-0.0000001
   DatasetCorelDf<-subset(CorelDataDf,CorelDataDf$id == dataset &
                            CorelDataDf$Benjamini.Hochberg =="Y")
@@ -130,6 +130,8 @@ generate_graph<-function(dataset)
   #lay<-layout_with_graphopt(net, charge=layparam)
   png(file=paste0(folderForResults,"/",dataset,"_pagel_graph.png"),
       width=19, height=19, res=300,units = "cm")
+  svg(file=paste0(folderForResults,"/",dataset,"_pagel_graph.png"),
+      width=19, height=19)
   plot(net,edge.arrow.size=.4,
        vertex.label.color="gray20",
        vertex.label.family="ArielMT",
