@@ -128,10 +128,12 @@ generate_graph<-function(dataset)
   #                     weights = log2(E(net)$width),
   #                     niter=1000)#layparam)
   #lay<-layout_with_graphopt(net, charge=layparam)
-  png(file=paste0(folderForResults,"/",dataset,"_pagel_graph.png"),
+  png(filename=paste0(folderForResults,"/",dataset,"_pagel_graph.png"),
       width=19, height=19, res=300,units = "cm")
-  svg(file=paste0(folderForResults,"/",dataset,"_pagel_graph.png"),
-      width=19, height=19)
+  svg(filename=paste0(folderForResults,"/",dataset,"_pagel_graph.svg"),
+      width=8, height=8)
+  dev.list()
+  for(d in dev.list()){
   plot(net,edge.arrow.size=.4,
        vertex.label.color="gray20",
        vertex.label.family="ArielMT",
@@ -141,7 +143,7 @@ generate_graph<-function(dataset)
        layout = layout_in_circle)
   legend(x="bottomleft", c("Mutually exclusive","Co-occuring"), pch=21,
          col="#777777", pt.bg=dircolors, pt.cex=.8, cex=.4, bty="n", ncol=1)
-  dev.off()
+  dev.off()}
   #######
   lay<-layout_with_fr(net,
                       weights = E(net)$width)
