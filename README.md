@@ -34,7 +34,7 @@ Contains data required to run the scripts above and some of the outputs
 
 *F1B_phylogroup_vs_number_of_defense.csv* provides information on the frequency of the amount of defense system within different *E. coli* strains, categorized by their phylogroups. [Figure 1B]
 
-*F1C_phylogroup_defense_location_raw_percentage.csv* shows the percentage of the location of defense systems, categorized by their phylogroups. [Figure 1C]
+*F1C_phylogroup_defense_raw_percentage.csv* shows the percentage of the location of defense systems, categorized by their phylogroups. [Figure 1C]
 
 *Table_S3_defense_cooccurrence_in_datasets.xlsx* contains the results of defense system co-occurrence calculation for *E. coli*, Enterobacteriales, Burkholderiales, Bacillales and Pseudomonadales. This is the combination of *Ecoli_pagel_all_results_with_direction.xlsx*, *enter_pagel_all_results_with_direction_0.01.xlsx*, *pseu_pagel_all_results_with_direction_0.01.xlsx*, *baci_pagel_all_results_with_direction_0.01.xlsx* and *burk_pagel_all_results_with_direction_0.01.xlsx*. [Figure 2B and 4]
 
@@ -57,6 +57,8 @@ Contains data required to run the scripts above and some of the outputs
 *FS2A_ecoli_significance_pair_frequency.csv* quantifies the co-occurring pattern between different systems, highlighting their co-occurrence and significance. [Figure S2A] 
 
 *FS2C_Distances_between_positive_significant_pairs_location2.csv* quantifies the location pattern of each co-occuring pair. [Figure S2C]
+
+*FS4B_5_dataset_defense_frequency1.xlsx* shows the difference of defense system composition across four orders and *E. coli*. It's used for Venn plot. [Figure S4B]
 
 *F5S_plasmid_loss.xlsx* contains the results of plasmid loss assay. [Figure S5]
 
