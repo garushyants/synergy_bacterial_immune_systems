@@ -9,7 +9,7 @@ path<-getwd()
 setwd(path)
 
 ##Figure 1B-the frequency of the amount of defense system in strains by phylogroup--------------------------
-data = read_csv("/Users/wubaobei/Desktop/test/defence/results/26k/latest/phylogroup_vs_number_of_defense.csv")
+data = read_csv("../data/F1B_phylogroup_vs_number_of_defense.csv")
 
 result <- data |>
   group_by(phylogroup) |>
@@ -40,7 +40,7 @@ ggsave(plot=p,filename = "../figures/Ecoli_defense_distribution/F1B_ecoli_defens
 
 
 ##Figure 1C-defense system percentage by phylogroup--------------------------
-data = read_csv("../data/phylogroup_defense_raw_percentage.csv")
+data = read_csv("../data/F1C_phylogroup_defense_raw_percentage.csv")
 data_long = data |> pivot_longer(cols=c("unassigned","E2","E1","C","B22","B21","B1","A"),
                                  names_to="phylogroup",
                                  values_to="percentage")
