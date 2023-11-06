@@ -27,6 +27,8 @@ Scripts *Ecoli26k_tree_phylogroups_defense_systems.R* and *Visualize_phylogeneti
 
 *SynergisticVsAntagonistic_4pairs.R* Analyses EOP and liquid assay experiments data for four pairs of immune systems: Zorya II + Druantia III, tmn + Gabija, Kiwa + ietAS, and ietAS + Zorya II
 
+*defense_distribution_visulization.R* Visuslize the data for defense system distribution, including Figure 1B, 1C, S2B, S2C, and S4.
+
 #### **data**
 Contains data required to run the scripts above and some of the outputs
 
