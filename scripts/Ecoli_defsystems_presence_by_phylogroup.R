@@ -52,6 +52,8 @@ EcoliDefense$location<-ifelse(EcoliDefense$prophage_within=="full",
                               paste("prophage",EcoliDefense$seqid_type),
                               EcoliDefense$seqid_type)
 
+EcoliDefense$length<-abs(EcoliDefense$end - EcoliDefense$start) +1
+
 DefenseBySystem<-EcoliDefense %>% group_by(genome,defense_system) %>%
   count(defense_system)
 DefenseBySystemWide<-as.data.frame(DefenseBySystem %>% 
@@ -109,6 +111,71 @@ ForPlotRaw<-merge(CountSystemsPerPhylo,CountPerPhylogroup,by="id")
 ForPlotRaw$perc<-ForPlotRaw$systemtotal*100/ForPlotRaw$total
 ForPlotRaw$defense_system<-factor(ForPlotRaw$defense_system,
                                      levels=SystemOrder)
+###Plot systems counts by genome
+SysPerGenomePlot<-DefWithoutCutoffLong %>% group_by(id,genome)%>%
+  summarise(syspergenome=sum(count)) %>%
+  group_by(id)%>%
+  mutate(median=median(syspergenome))
+
+SysPerGenomePlotObj<-ggplot(data=SysPerGenomePlot,
+       aes(x=syspergenome, group=id, fill=id))+
+  geom_histogram(bins=15)+
+  scale_fill_manual(values=c("#a6cee3","#1f78b4","#b2df8a",
+                             "#33a02c","#fb9a99","#cab2d6",
+                             "#6a3d9a"),
+                    name = "")+
+  facet_wrap(~id, ncol=1, scales = "free_y")+
+  geom_vline(aes(xintercept = median),
+             linewidth=1.5,
+             color="#67000d")+
+  theme_classic()+
+  scale_x_continuous(breaks=seq(1,20,1), limits=c(0,18))+
+  xlab("Defence systems per genome")
+SysPerGenomePlotObj  
+####Calculate sum length of systems per genome on average
+EcoliDefLengthForPlot<-subset(EcoliDefense,
+                         EcoliDefense$genome %in% unique(SysPerGenomePlot$genome))
+PreDefLengthForPlot<-merge(EcoliDefLengthForPlot, SysPerGenomePlot[,c(1,2)], by="genome")
+
+#the problem is that some systems are very short, because the genomes are not full
+#in some cases I have systems for which I need to know the genome length
+#the easiest way is to remove outliers
+minmaxlength<-quantile(PreDefLengthForPlot$length, probs=c(0.01, 0.99))
+PreDefLengthForPlot<-subset(PreDefLengthForPlot,
+                            PreDefLengthForPlot$length > minmaxlength[1] &
+                              PreDefLengthForPlot$length < minmaxlength[2])
+
+DefLengthForPlot<- PreDefLengthForPlot %>% group_by(id,genome)%>%
+  summarise(lengthpergenome=sum(length))%>%
+  group_by(id)%>%
+  mutate(median=median(lengthpergenome))
+
+#Plot
+LengthPerGenomePlot<-ggplot(data=DefLengthForPlot,
+       aes(x=lengthpergenome, group=id, fill=id))+
+  geom_histogram(bins=30)+
+  scale_fill_manual(values=c("#a6cee3","#1f78b4","#b2df8a",
+                             "#33a02c","#fb9a99","#cab2d6",
+                             "#6a3d9a"),
+                    name = "")+
+  facet_wrap(~id, ncol=1, scales = "free_y")+
+  geom_vline(aes(xintercept = median),
+             linewidth=1.5,
+             color="#67000d")+
+  theme_classic()+
+  scale_x_continuous(breaks=seq(0,150000,10000))+
+  xlab("Defence systems length per genome")
+LengthPerGenomePlot
+
+SysPerGenomeNumAndLength<-ggarrange(SysPerGenomePlotObj, LengthPerGenomePlot,
+          ncol=2,
+          common.legend = T,
+          legend = "right")
+
+#save
+ggsave("../figures/Ecoli_phylogroups/SystemsNumAndLengthPerGenomeByPhylogroup_raw.png", 
+       plot=SysPerGenomeNumAndLength,
+       width=25, height = 28, units="cm",dpi=300)
 
 ####Plot Raw counts
 LongPlotFacet<-ggplot(ForPlotRaw,aes(y=defense_system,x=perc, fill=id))+
