@@ -119,7 +119,8 @@ SysPerGenomePlot<-DefWithoutCutoffLong %>% group_by(id,genome)%>%
 
 SysPerGenomePlotObj<-ggplot(data=SysPerGenomePlot,
        aes(x=syspergenome, group=id, fill=id))+
-  geom_histogram(bins=15)+
+  geom_histogram(bins=15,
+           color="white")+
   scale_fill_manual(values=c("#a6cee3","#1f78b4","#b2df8a",
                              "#33a02c","#fb9a99","#cab2d6",
                              "#6a3d9a"),
@@ -153,7 +154,8 @@ DefLengthForPlot<- PreDefLengthForPlot %>% group_by(id,genome)%>%
 #Plot
 LengthPerGenomePlot<-ggplot(data=DefLengthForPlot,
        aes(x=lengthpergenome, group=id, fill=id))+
-  geom_histogram(bins=30)+
+  geom_histogram(bins=30,
+                 color="white")+
   scale_fill_manual(values=c("#a6cee3","#1f78b4","#b2df8a",
                              "#33a02c","#fb9a99","#cab2d6",
                              "#6a3d9a"),
