@@ -191,6 +191,7 @@ MedianLenDefVsNumPlot<-ggplot(data=MedianLenDefVsNum,
            fill=id))+
   geom_point(shape=21,
              size=3,
+             stroke=0.4,
              color="#bdbdbd")+
   scale_fill_manual(values=c("#a6cee3","#1f78b4","#b2df8a",
                              "#33a02c","#fb9a99","#cab2d6",
