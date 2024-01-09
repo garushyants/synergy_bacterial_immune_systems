@@ -112,12 +112,35 @@ ForPlotRaw<-merge(CountSystemsPerPhylo,CountPerPhylogroup,by="id")
 ForPlotRaw$perc<-ForPlotRaw$systemtotal*100/ForPlotRaw$total
 ForPlotRaw$defense_system<-factor(ForPlotRaw$defense_system,
                                      levels=SystemOrder)
-###Plot systems counts by genome
+###Systems counts by genome per phylogroup
 SysPerGenomePlot<-DefWithoutCutoffLong %>% group_by(id,genome)%>%
   summarise(syspergenome=sum(count)) %>%
   group_by(id)%>%
   mutate(median=median(syspergenome))
 
+#do stat
+SysPerGenomePlot %>% group_by(id)%>%
+  summarise(median = median(syspergenome),
+            sd=sd(syspergenome))
+
+doWilcoxTest<-function(group1, group2)
+{
+  
+  Res<-wilcox.test(pull(SysPerGenomePlot[SysPerGenomePlot$id==group1,][3]),
+              pull(SysPerGenomePlot[SysPerGenomePlot$id==group2,][3]),
+              alternative = "two.sided")
+  return(Res)
+}
+
+doWilcoxTest("A","C")
+doWilcoxTest("A","E2")
+doWilcoxTest("A","B21")
+doWilcoxTest("B1","B21")
+doWilcoxTest("B22","B21")
+doWilcoxTest("C","B22")
+doWilcoxTest("E1","E2")
+
+#Plot
 SysPerGenomePlotObj<-ggplot(data=SysPerGenomePlot,
        aes(x=syspergenome, group=id, fill=id))+
   geom_histogram(bins=15,
