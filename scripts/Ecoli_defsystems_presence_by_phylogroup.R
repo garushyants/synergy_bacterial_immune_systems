@@ -2,6 +2,7 @@ library(phytools)
 library(stringr)
 library(ggplot2)
 library(ggpubr)
+library(ggpmisc)
 library(dplyr)
 library(tidyr)
 library(writexl)
@@ -178,6 +179,47 @@ SysPerGenomeNumAndLength<-ggarrange(SysPerGenomePlotObj, LengthPerGenomePlot,
 ggsave("../figures/Ecoli_phylogroups/SystemsNumAndLengthPerGenomeByPhylogroup_raw.png", 
        plot=SysPerGenomeNumAndLength,
        width=25, height = 28, units="cm",dpi=300)
+
+#correlation between number and mean length of system
+MedianDefLength<- PreDefLengthForPlot %>% group_by(id,genome)%>%
+  summarise(medianlengthpergenome=median(length))
+MedianLenDefVsNum<-merge(MedianDefLength, SysPerGenomePlot, by=c("genome","id"))
+
+MedianLenDefVsNumPlot<-ggplot(data=MedianLenDefVsNum,
+       aes(x=syspergenome,
+           y=medianlengthpergenome,
+           fill=id))+
+  geom_point(shape=21,
+             size=3,
+             color="#bdbdbd")+
+  scale_fill_manual(values=c("#a6cee3","#1f78b4","#b2df8a",
+                             "#33a02c","#fb9a99","#cab2d6",
+                             "#6a3d9a"),
+                    name = "")+
+  scale_x_continuous(name="# of defence systems per genome",
+                     limits=c(0,18),
+                     breaks =seq(0,20,1))+
+  scale_y_continuous(breaks=seq(0,20000,1000), 
+                     name="median defence system length per genome")+
+  stat_poly_eq(formula = y ~ x, data=MedianLenDefVsNum, inherit.aes = F,
+               aes(x = syspergenome, y = medianlengthpergenome, label = paste(..rr.label..,
+                                                                        ..p.value.label..,
+                                                                        sep = "~~~~")), 
+               parse = TRUE)+
+  geom_smooth(data=MedianLenDefVsNum,
+              aes(x=syspergenome,
+                  y=medianlengthpergenome),
+              inherit.aes=F,
+              method='lm',
+              color = "#49006a")+
+  theme_classic2(base_family = "ArielMT")
+MedianLenDefVsNumPlot
+
+ggsave("../figures/Ecoli_phylogroups/SystemsNumVsMedianLengthPerGenome_raw.png", 
+       plot=MedianLenDefVsNumPlot,
+       width=25, height = 28, units="cm",dpi=300)
+
+
 
 ####Plot Raw counts
 LongPlotFacet<-ggplot(ForPlotRaw,aes(y=defense_system,x=perc, fill=id))+
