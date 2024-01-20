@@ -11,10 +11,10 @@ library(ggpubr)
 
 path<-getwd()
 setwd(path)
-setwd("../")
+#setwd("../")
 
 args = commandArgs(trailingOnly = T)
-#args=c(6067,"./pagel_enter","entertree_resavediTOL_newick.txt","merged_enter3.csv",scalingFactor=0.1)
+#args=c(18,"./pagel_baci","bacitree_resavediTOL_newick.txt","baci_filtered.csv",scalingFactor=0.1)
 # second argument is folder
 # test if there is at least one argument: if not, return an error
 if (length(args) < 5) {
@@ -40,11 +40,11 @@ tree$edge.length<-newedgelengths
 #Read data
 DefenseFile<-read.csv(args[4], header = T)
 
-#column defense_system2 contains uniform system names that allows to work with padloc and defensefinder outputs
-DefenceBySystem<-DefenseFile %>% group_by(genome,defense_system2) %>%
-  count(defense_system2)
+#column immune_system contains uniform system names that allows to work with padloc and defensefinder outputs
+DefenceBySystem<-DefenseFile %>% group_by(genome,immune_system) %>%
+  count(immune_system)
 DefenceBySystemWide<-as.data.frame(DefenceBySystem %>% 
-                                     pivot_wider(names_from = defense_system2, values_from = n))
+                                     pivot_wider(names_from = immune_system, values_from = n))
 
 #Filter data
 DefenceBySystemWideFiltered<-subset(DefenceBySystemWide, DefenceBySystemWide$genome %in% newtipnames)
@@ -113,150 +113,158 @@ names(var1) <- rownames(DefenceBySystemWideBinary)
 var2 <- DefenceBySystemWideBinary %>% pull(j)
 names(var2) <- rownames(DefenceBySystemWideBinary)
 
-res <- fitPagel(treedefscaled, x = var1, y = var2, method="fitDiscrete")
-
-ResToWrite<-data.frame(v1=i,v2=j,v3=res$P[1])
-
-
-
-#write model for prominent cases
-if (res$P[1] < 0.01) {
-  imod<-str_replace(i,'/','_')
-  jmod<-str_replace(j,'/','_')
-  dirfordetails<-paste(args[2],"/",imod,"_",jmod,"/",sep="")
+if(length(unique(var1)) ==2 & length(unique(var2))==2)
+{
+  res <- fitPagel(treedefscaled, x = var1, y = var2, method="fitDiscrete")
   
-  dir.create(dirfordetails)
+  ResToWrite<-data.frame(v1=i,v2=j,v3=res$P[1])
   
-  ###
-  resi <- fitPagel(treedefscaled, x = var1, y = var2, dep.var = "x", method="fitDiscrete")
-  resj <- fitPagel(treedefscaled, x = var1, y = var2, dep.var = "y", method="fitDiscrete")
-  ResToWrite$v4<-resi$P[1]
-  ResToWrite$v5<-resj$P[1]
-
-  png(file=paste(dirfordetails,"/",imod,"_",jmod,"_pagel_probabilities.png", sep=""),
-      width=2600,height=2600, units ="px",res=300)
-
-  plot(res,lwd.by.rate=TRUE,
-       main=c("Independent model",
-              "Full dependent model"))
-  dev.off()
   
-  modeloutput<-paste(dirfordetails,"/",imod,"_",jmod,"_model.output",sep="")
-  sink(modeloutput)
-  print(res)
-  sink()
   
-  if (resi$P[1]<0.01){
-    write.csv(resi$dependent.Q, file = paste(dirfordetails,"/",imod,"_",jmod,"_",imod,"_dependent.matrix",sep=""),
-              quote = F)
-    png(file=paste(dirfordetails,"/",imod,"_",jmod,"_",imod,"_pagel_probabilities.png", sep=""),
+  #write model for prominent cases
+  if (res$P[1] < 0.01) {
+    imod<-str_replace(i,'/','_')
+    jmod<-str_replace(j,'/','_')
+    dirfordetails<-paste(args[2],"/",imod,"_",jmod,"/",sep="")
+    if (!dir.exists(dirfordetails)){
+      dir.create(dirfordetails)
+    }else{
+      print("dir for results already exists, no need for new one")
+    }
+    
+    ###
+    resi <- fitPagel(treedefscaled, x = var1, y = var2, dep.var = "x", method="fitDiscrete")
+    resj <- fitPagel(treedefscaled, x = var1, y = var2, dep.var = "y", method="fitDiscrete")
+    ResToWrite$v4<-resi$P[1]
+    ResToWrite$v5<-resj$P[1]
+    
+    png(file=paste(dirfordetails,"/",imod,"_",jmod,"_pagel_probabilities.png", sep=""),
         width=2600,height=2600, units ="px",res=300)
     
-    plot(resi,lwd.by.rate=TRUE,
+    plot(res,lwd.by.rate=TRUE,
          main=c("Independent model",
                 "Full dependent model"))
     dev.off()
-  }
-  if (resj$P[1]<0.01){
-    write.csv(resj$dependent.Q, file = paste(dirfordetails,"/",imod,"_",jmod,"_",jmod,"_dependent.matrix",sep=""),
+    
+    modeloutput<-paste(dirfordetails,"/",imod,"_",jmod,"_model.output",sep="")
+    sink(modeloutput)
+    print(res)
+    sink()
+    
+    if (resi$P[1]<0.01){
+      write.csv(resi$dependent.Q, file = paste(dirfordetails,"/",imod,"_",jmod,"_",imod,"_dependent.matrix",sep=""),
+                quote = F)
+      png(file=paste(dirfordetails,"/",imod,"_",jmod,"_",imod,"_pagel_probabilities.png", sep=""),
+          width=2600,height=2600, units ="px",res=300)
+      
+      plot(resi,lwd.by.rate=TRUE,
+           main=c("Independent model",
+                  "Full dependent model"))
+      dev.off()
+    }
+    if (resj$P[1]<0.01){
+      write.csv(resj$dependent.Q, file = paste(dirfordetails,"/",imod,"_",jmod,"_",jmod,"_dependent.matrix",sep=""),
+                quote = F)
+      png(file=paste(dirfordetails,"/",imod,"_",jmod,"_",jmod,"_pagel_probabilities.png", sep=""),
+          width=2600,height=2600, units ="px",res=300)
+      
+      plot(resj,lwd.by.rate=TRUE,
+           main=c("Independent model",
+                  "Full dependent model"))
+      dev.off()
+    }
+    
+    write.csv(res$dependent.Q, file = paste(dirfordetails,"/",imod,"_",jmod,"_dependent.matrix",sep=""),
               quote = F)
-    png(file=paste(dirfordetails,"/",imod,"_",jmod,"_",jmod,"_pagel_probabilities.png", sep=""),
-        width=2600,height=2600, units ="px",res=300)
     
-    plot(resj,lwd.by.rate=TRUE,
-         main=c("Independent model",
-                "Full dependent model"))
-    dev.off()
+    #draw plots
+    
+    DFForVizualization<-DefenceBySystemWideBinary
+    DFForVizualization$genome<-rownames(DefenceBySystemWideBinary)
+    
+    vizualizetree<-function(dsys1,dsys2)
+    {
+      #dsys1<-"Zorya II"
+      #dsys2<-"ietAS"
+      DsysDf<-as.data.frame(subset(DFForVizualization, DFForVizualization[[dsys1]]== 1 |
+                                     DFForVizualization[[dsys2]]== 1)[,c("genome",dsys1,dsys2)])
+      #subset tree
+      subtree<-get_subtree_with_tips(treedef, only_tips = DsysDf$genome)$subtree
+      #orderDf
+      DsysDfforplot<-subset(DsysDf, DsysDf$genome %in% subtree$tip.label)
+      #Trees are drawn with ggtree
+      Sys1Plot<-ggtree(subtree, size =0.1, color = "#525252") %<+% DsysDfforplot +
+        geom_tippoint(aes(color = as.factor(get(dsys1))),
+                      size =0.7,
+                      show.legend = F) +
+        scale_color_manual(values = c("black","#31a354"), breaks=c(0,1))+
+        ggtitle(dsys1)+
+        theme(plot.title = element_text(hjust = 0.5),
+              plot.margin = unit(c(0.5,0,0.5,0),"mm"))
+      #
+      Sys2Plot<-ggtree(subtree, size =0.1, color = "#525252") %<+% DsysDfforplot +
+        geom_tippoint(aes(color = as.factor(get(dsys2))),
+                      size =0.7,
+                      show.legend = F) +
+        scale_color_manual(values = c("black","#fd8d3c"), breaks=c(0,1)) +
+        scale_x_reverse() +
+        ggtitle(dsys2)+
+        theme(plot.title = element_text(hjust = 0.5),
+              plot.margin = unit(c(0.5,0,0.5,0),"mm"))
+      #combine
+      PlotToSave<-ggarrange(Sys1Plot, Sys2Plot,
+                            align = "h",
+                            ncol = 2)
+      PlotToSave
+      
+      ggsave(paste(str_replace(dsys1,"/","_"),"_",str_replace(dsys2,"/","_"),"_tree.png", sep=""), 
+             path=dirfordetails,
+             PlotToSave,
+             width=3600,height=2400, units ="px",dpi=300)
+      
+    }
+    
+    ##
+    vizualizetreefull<-function(dsys1,dsys2)
+    {
+      #dsys1<-"Gabija"
+      #dsys2<-"tmn"
+      DsysDf<-as.data.frame(DFForVizualization[,c("genome",dsys1,dsys2)])
+      
+      Sys1Plot<-ggtree(treedef, size =0.1, color = "#525252") %<+% DsysDf +
+        geom_tippoint(aes(color = as.factor(get(dsys1))),
+                      size =0.7,
+                      show.legend = F) +
+        scale_color_manual(values = c("black","#31a354"), breaks=c(0,1))+
+        xlab(dsys1)+
+        layout_dendrogram()
+      #
+      Sys2Plot<-ggtree(treedef, size =0.1, color = "#525252") %<+% DsysDf +
+        geom_tippoint(aes(color = as.factor(get(dsys2))),
+                      size =0.7,
+                      show.legend = F) +
+        scale_color_manual(values = c("black","#fd8d3c"), breaks=c(0,1)) +
+        coord_flip() +
+        xlab(dsys2)
+      #combine
+      PlotToSavefull<-ggarrange(Sys1Plot, Sys2Plot,
+                                align = "h",
+                                ncol = 1)
+      PlotToSavefull
+      ggsave(paste(str_replace(dsys1,"/","_"),"_",str_replace(dsys2,"/","_"),"_treefull.png", sep=""), path=dirfordetails,
+             PlotToSavefull,
+             width=6000,height=2400, units ="px",dpi=300)
+    }
+    vizualizetree(i,j)
+    vizualizetreefull(i,j)
   }
-
-  write.csv(res$dependent.Q, file = paste(dirfordetails,"/",imod,"_",jmod,"_dependent.matrix",sep=""),
-            quote = F)
-
-  #draw plots
-
-  DFForVizualization<-DefenceBySystemWideBinary
-  DFForVizualization$genome<-rownames(DefenceBySystemWideBinary)
   
-  vizualizetree<-function(dsys1,dsys2)
-  {
-    #dsys1<-"Zorya II"
-    #dsys2<-"ietAS"
-    DsysDf<-as.data.frame(subset(DFForVizualization, DFForVizualization[[dsys1]]== 1 |
-                                   DFForVizualization[[dsys2]]== 1)[,c("genome",dsys1,dsys2)])
-    #subset tree
-    subtree<-get_subtree_with_tips(treedef, only_tips = DsysDf$genome)$subtree
-    #orderDf
-    DsysDfforplot<-subset(DsysDf, DsysDf$genome %in% subtree$tip.label)
-    #Trees are drawn with ggtree
-    Sys1Plot<-ggtree(subtree, size =0.1, color = "#525252") %<+% DsysDfforplot +
-      geom_tippoint(aes(color = as.factor(get(dsys1))),
-                    size =0.7,
-                    show.legend = F) +
-      scale_color_manual(values = c("black","#31a354"), breaks=c(0,1))+
-      ggtitle(dsys1)+
-      theme(plot.title = element_text(hjust = 0.5),
-            plot.margin = unit(c(0.5,0,0.5,0),"mm"))
-    #
-    Sys2Plot<-ggtree(subtree, size =0.1, color = "#525252") %<+% DsysDfforplot +
-      geom_tippoint(aes(color = as.factor(get(dsys2))),
-                    size =0.7,
-                    show.legend = F) +
-      scale_color_manual(values = c("black","#fd8d3c"), breaks=c(0,1)) +
-      scale_x_reverse() +
-      ggtitle(dsys2)+
-      theme(plot.title = element_text(hjust = 0.5),
-            plot.margin = unit(c(0.5,0,0.5,0),"mm"))
-    #combine
-    PlotToSave<-ggarrange(Sys1Plot, Sys2Plot,
-                          align = "h",
-                          ncol = 2)
-    PlotToSave
-    
-    ggsave(paste(str_replace(dsys1,"/","_"),"_",str_replace(dsys2,"/","_"),"_tree.png", sep=""), path=dirfordetails,
-           PlotToSave,
-           width=3600,height=2400, units ="px",dpi=300)
-    
-  }
+  ###Write the main results down
+  filename<-paste(args[2],"/",args[1],".txt",sep="")
   
-  ##
-  vizualizetreefull<-function(dsys1,dsys2)
-  {
-    #dsys1<-"Gabija"
-    #dsys2<-"tmn"
-    DsysDf<-as.data.frame(DFForVizualization[,c("genome",dsys1,dsys2)])
-    
-    Sys1Plot<-ggtree(treedef, size =0.1, color = "#525252") %<+% DsysDf +
-      geom_tippoint(aes(color = as.factor(get(dsys1))),
-                    size =0.7,
-                    show.legend = F) +
-      scale_color_manual(values = c("black","#31a354"), breaks=c(0,1))+
-      xlab(dsys1)+
-      layout_dendrogram()
-    #
-    Sys2Plot<-ggtree(treedef, size =0.1, color = "#525252") %<+% DsysDf +
-      geom_tippoint(aes(color = as.factor(get(dsys2))),
-                    size =0.7,
-                    show.legend = F) +
-      scale_color_manual(values = c("black","#fd8d3c"), breaks=c(0,1)) +
-      coord_flip() +
-      xlab(dsys2)
-    #combine
-    PlotToSavefull<-ggarrange(Sys1Plot, Sys2Plot,
-                              align = "h",
-                              ncol = 1)
-    PlotToSavefull
-    ggsave(paste(str_replace(dsys1,"/","_"),"_",str_replace(dsys2,"/","_"),"_treefull.png", sep=""), path=dirfordetails,
-           PlotToSavefull,
-           width=6000,height=2400, units ="px",dpi=300)
-  }
-  vizualizetree(i,j)
-  vizualizetreefull(i,j)
+  write.table(ResToWrite, file=filename, sep="\t",row.names=F,
+              quote=F,col.names = F)
+}else{
+  print("One of the systems in non-binary (completely missing in filtered genome set)")
 }
-
-###Write the main results down
-filename<-paste(args[2],"/",args[1],".txt",sep="")
-
-write.table(ResToWrite, file=filename, sep="\t",row.names=F,
-            quote=F,col.names = F)
-
 

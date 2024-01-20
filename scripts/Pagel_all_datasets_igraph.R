@@ -8,7 +8,7 @@ library(igraph)
 
 path<-getwd()
 setwd(path)
-setwd("../")
+#setwd("../")
 
 ######
 #create folder to output figures
@@ -42,21 +42,19 @@ CorelDataDf$sysB<-ifelse(CorelDataDf$System.II == order(CorelDataDf$System.I,Cor
 
 ######
 #read raw data on system co-occurence
-rawfiles<-paste0("./data/merged_",datasets,"3.csv")
-rawfiles<-c(rawfiles,"./data/26k_Ecoli_with_prophages.csv")
+rawfiles<-paste0("./data/",datasets,"_filtered.csv")
+rawfiles<-c(rawfiles,"./data/ecoli_filtered.csv")
 
 RawData<-lapply(rawfiles,read.csv)
 names(RawData)<-names(CorrelData)
 RawDataDf<-data_frame(id = names(RawData), RawData) %>%
   unnest(cols = c(RawData))
-RawDataDf$defense_system2<-ifelse(is.na(RawDataDf$defense_system2),
-                                  RawDataDf$defense_system,
-                                  RawDataDf$defense_system2)
-RawDataDfRed<-RawDataDf[,c("id","start","end","genome","defense_system2")]
+
+RawDataDfRed<-RawDataDf[,c("id","start","end","genome","immune_system")]
 
 ##generate counts for nodes
-SystemCountsDf<-RawDataDf[,c("id","genome","defense_system2")] %>%
-  group_by(id,defense_system2) %>% count()
+SystemCountsDf<-RawDataDf[,c("id","genome","immune_system")] %>%
+  group_by(id,immune_system) %>% count()
 
 ######
 #generate graph for each dataset
@@ -74,8 +72,8 @@ generate_graph<-function(dataset)
     # sysA<-unlist(DatasetCorelDf[1,"sysA"])
     # sysB<-unlist(DatasetCorelDf[1,"sysB"])
     
-    InitialCounts<-RawDataDf[RawDataDf$id==dataset & RawDataDf$defense_system2 %in% c(sysA,sysB),] %>%
-      group_by(genome) %>% summarise(sysc=length(unique(defense_system2)))
+    InitialCounts<-RawDataDf[RawDataDf$id==dataset & RawDataDf$immune_system %in% c(sysA,sysB),] %>%
+      group_by(genome) %>% summarise(sysc=length(unique(immune_system)))
     count<-nrow(InitialCounts[InitialCounts$sysc==2,])
     return(count)
   }
@@ -111,7 +109,7 @@ generate_graph<-function(dataset)
   edges$direction<-as.character(edges$direction)
   names(edges)<-c("from","to","direction","type","weight")
   nodes<-SystemCountsDf[SystemCountsDf$id ==dataset & 
-                          SystemCountsDf$defense_system2 %in% c(DatasetCorelDf$sysA,
+                          SystemCountsDf$immune_system %in% c(DatasetCorelDf$sysA,
                                                                 DatasetCorelDf$sysB),c(2:3)]
   names(nodes)<-c("id","count")
   net <- graph_from_data_frame(d=edges, vertices=nodes, directed=F) 
@@ -149,6 +147,10 @@ generate_graph<-function(dataset)
                       weights = E(net)$width)
   png(file=paste0(folderForResults,"/",dataset,"_pagel_graph_fr.png"),
       width=19, height=19, res=300,units = "cm")
+  svg(file=paste0(folderForResults,"/",dataset,"_pagel_graph_fr.svg"),
+      width=9, height=9)
+  dev.list()
+  for(d in dev.list()){
   plot(net,edge.arrow.size=.4,
        vertex.label.color="gray20",
        vertex.label.family="ArielMT",
@@ -158,7 +160,7 @@ generate_graph<-function(dataset)
        layout = lay)
   legend(x="bottomleft", c("Mutually exclusive","Co-occuring"), pch=21,
          col="#777777", pt.bg=dircolors, pt.cex=.8, cex=.4, bty="n", ncol=1)
-  dev.off()
+  dev.off()}
 }
 
 generate_graph("pseu")

@@ -10,7 +10,7 @@ library(writexl)
 
 path<-getwd()
 setwd(path)
-setwd("../")
+#setwd("../")
 
 
 #basic parameters
@@ -71,23 +71,16 @@ getCorrelationPlot<-function(mashmatrix,tree,defensesystemsfile,subset=0,prefix 
   #read defense systems info
   EcoliDefense<-read.csv(defensesystemsfile, header = T)
   
-  #rename column for other dataset
-  if ("defense_system2" %in% colnames(EcoliDefense))
-  {
-    colnames(EcoliDefense)[colnames(EcoliDefense) == 'defense_system'] <- 'incorrect_names'
-    colnames(EcoliDefense)[colnames(EcoliDefense) == 'defense_system2'] <- 'defense_system'
-  }
-  
   #get subset
   EcoliDefenseSubset<-subset(EcoliDefense,
                              EcoliDefense$genome %in% GenomesSubset)
   
   #transform
-  DefenseBySystem<-EcoliDefenseSubset %>% group_by(genome,defense_system) %>%
-    count(defense_system)
+  DefenseBySystem<-EcoliDefenseSubset %>% group_by(genome,immune_system) %>%
+    count(immune_system)
   
   DefenseBySystemWide<-as.data.frame(DefenseBySystem %>% 
-                                       pivot_wider(names_from = defense_system, values_from = n))
+                                       pivot_wider(names_from = immune_system, values_from = n))
   #binary
   DefenseBySystemWideBinary<-DefenseBySystemWide[,c(2:ncol(DefenseBySystemWide))]
   rownames(DefenseBySystemWideBinary)<-DefenseBySystemWide$genome
@@ -176,7 +169,7 @@ getCorrelationPlot<-function(mashmatrix,tree,defensesystemsfile,subset=0,prefix 
   
   #######Save figures
   plotname<-paste0(folderForFigures,"/",prefix,"_sub",subset,
-                   "_correlation_phylogenetic_distance_vs_defense_systems_densities")
+                   "_correlation_phylogenetic_distance_vs_immune_systems_densities")
   ggsave(paste0(plotname,".png"),
          plot=CorrelationPlotDensity,
          width=10, height=8, units="cm", dpi=300)
@@ -189,24 +182,24 @@ getCorrelationPlot<-function(mashmatrix,tree,defensesystemsfile,subset=0,prefix 
 #Whole 26k Ecoli
 getCorrelationPlot("./data/mash_distances/Ecoli_matrix.phylip",
                    "./data/Ecoli_tree_rapidnj.rM2.treeshrink_corrected.nwk",
-                   "./data/26k_Ecoli_with_prophages.csv",subset=subsetsize)
+                   "./data/ecoli_filtered.csv",subset=subsetsize)
 
 #Enterobacteriales dataset
 getCorrelationPlot("./data/mash_distances/entertree_matrix.phylip",
                    "./data/entertree_resavediTOL_newick.txt",
-                   "./data/merged_enter3.csv",subset=subsetsize)
+                   "./data/enter_filtered.csv",subset=subsetsize)
 #Pseumonadales dataset
 getCorrelationPlot("./data/mash_distances/pseutree_matrix.phylip",
                    "./data/pseutree_resavediTOL_newick.txt",
-                   "./data/merged_pseu3.csv",subset=subsetsize)
+                   "./data/pseu_filtered.csv",subset=subsetsize)
 #Bacillales dataset
 getCorrelationPlot("./data/mash_distances/bacitree_matrix.phylip",
                    "./data/bacitree_resavediTOL_newick.txt",
-                   "./data/merged_baci3.csv",subset=subsetsize)
+                   "./data/baci_filtered.csv",subset=subsetsize)
 #Burkholdriales dataset
 getCorrelationPlot("./data/mash_distances/burktree_matrix.phylip",
                    "./data/burktree_resavediTOL_newick.txt",
-                   "./data/merged_burk3.csv",subset=subsetsize)
+                   "./data/burk_filtered.csv",subset=subsetsize)
 
 ########
 #Do the same for the individual E.coli phylogroups
@@ -214,30 +207,30 @@ getCorrelationPlot("./data/mash_distances/burktree_matrix.phylip",
 #the total number of leaves in those groups is  ~1000, that is why no subsetting here
 getCorrelationPlot("./data/mash_distances/Ecoli_matrix.phylip",
                    "./data/Ecoli_phylogroups/Ecoli_E2.nwk",
-                   "./data/26k_Ecoli_with_prophages.csv",prefix = "Ecoli_E2",rx=0.005)
+                   "./data/ecoli_filtered.csv",prefix = "Ecoli_E2",rx=0.005)
 getCorrelationPlot("./data/mash_distances/Ecoli_matrix.phylip",
                    "./data/Ecoli_phylogroups/Ecoli_E1.nwk",
-                   "./data/26k_Ecoli_with_prophages.csv",prefix = "Ecoli_E1",rx=0.005)
+                   "./data/ecoli_filtered.csv",prefix = "Ecoli_E1",rx=0.005)
 getCorrelationPlot("./data/mash_distances/Ecoli_matrix.phylip",
                    "./data/Ecoli_phylogroups/Ecoli_C.nwk",
-                   "./data/26k_Ecoli_with_prophages.csv",prefix = "Ecoli_C",rx=0.005)
+                   "./data/ecoli_filtered.csv",prefix = "Ecoli_C",rx=0.005)
 
 #sub-setting for larger groups
 getCorrelationPlot("./data/mash_distances/Ecoli_matrix.phylip",
                    "./data/Ecoli_phylogroups/Ecoli_A.nwk",
-                   "./data/26k_Ecoli_with_prophages.csv",subset=subsetsize,prefix = "Ecoli_A",
+                   "./data/ecoli_filtered.csv",subset=subsetsize,prefix = "Ecoli_A",
                    rx=0.005)
 getCorrelationPlot("./data/mash_distances/Ecoli_matrix.phylip",
                    "./data/Ecoli_phylogroups/Ecoli_B1.nwk",
-                   "./data/26k_Ecoli_with_prophages.csv",subset=subsetsize,prefix = "Ecoli_B1",
+                   "./data/ecoli_filtered.csv",subset=subsetsize,prefix = "Ecoli_B1",
                    rx=0.005)
 getCorrelationPlot("./data/mash_distances/Ecoli_matrix.phylip",
                    "./data/Ecoli_phylogroups/Ecoli_B21.nwk",
-                   "./data/26k_Ecoli_with_prophages.csv",subset=subsetsize,prefix = "Ecoli_B21",
+                   "./data/ecoli_filtered.csv",subset=subsetsize,prefix = "Ecoli_B21",
                    rx=0.005)
 getCorrelationPlot("./data/mash_distances/Ecoli_matrix.phylip",
                    "./data/Ecoli_phylogroups/Ecoli_B22.nwk",
-                   "./data/26k_Ecoli_with_prophages.csv",subset=subsetsize,prefix = "Ecoli_B22",
+                   "./data/ecoli_filtered.csv",subset=subsetsize,prefix = "Ecoli_B22",
                    rx=0.005)
 
 

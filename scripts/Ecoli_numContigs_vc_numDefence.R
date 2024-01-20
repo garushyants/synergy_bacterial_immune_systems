@@ -8,21 +8,21 @@ setwd(path)
 
 
 ###read tree
-tree<-read.tree("../data/Ecoli_tree_rapidnj.rM2.treeshrink_corrected.nwk")
+tree<-read.tree("./data/Ecoli_tree_rapidnj.rM2.treeshrink_corrected.nwk")
 GenomesToKeep<-tree$tip.label
 rep_str = c("'"='','.fna'='')
 GenomesToKeep<-str_replace_all(GenomesToKeep,rep_str)
 
 ###read contig count data
-EcoliContigs<-read.csv("../data/Ecoli_numContigs_vs_numDefence/Ecoli_contigs.txt", sep="\t", header=F)
+EcoliContigs<-read.csv("./data/Ecoli_numContigs_vs_numDefence/Ecoli_contigs.txt", sep="\t", header=F)
 EcoliContigs$genome<-str_replace(EcoliContigs$V1,".fna","")
 EcoliContigsFilt<-subset(EcoliContigs,
                          EcoliContigs$genome %in% GenomesToKeep)
 
-AssemblySummary<-read.csv("../data/Ecoli_numContigs_vs_numDefence/assembly_summary_refseq_ecoli.csv", header=T)
+AssemblySummary<-read.csv("./data/Ecoli_numContigs_vs_numDefence/assembly_summary_refseq_ecoli.csv", header=T)
 
 ######Read defence data
-EcoliDefense<-read.csv("../data/26k_Ecoli_with_prophages.csv")
+EcoliDefense<-read.csv("./data/ecoli_filtered.csv")
 
 EcoliDefenseWithContigsCounts<-subset(EcoliDefense,
                                       EcoliDefense$genome %in% EcoliContigsFilt$genome &
@@ -73,10 +73,10 @@ Plot<-ggplot(data=ForPlot,
 Plot
 
 
-ggsave("../figures/Ecoli_numContigs_vs_numDefence/Ecoli_numPredictedDefence_vs_numContigs.svg",
+ggsave("./figures/Ecoli_numContigs_vs_numDefence/Ecoli_numPredictedDefence_vs_numContigs.svg",
        plot=Plot,
        width=20, height=18, units="cm", dpi=300)
-ggsave("../figures/Ecoli_numContigs_vs_numDefence/Ecoli_numPredictedDefence_vs_numContigs.png",
+ggsave("./figures/Ecoli_numContigs_vs_numDefence/Ecoli_numPredictedDefence_vs_numContigs.png",
        plot=Plot,
        width=20, height=18, units="cm", dpi=300)
 

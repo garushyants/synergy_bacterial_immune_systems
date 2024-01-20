@@ -7,9 +7,9 @@ library(ggplot2)
 library(ggpubr)
 library(writexl)
 
-setwd("../")
+#setwd("../")
 
-folderwithmatrices<-"../20230209_rerun_pagel_Ecoli/pagel_fitDiscrete/"
+folderwithmatrices<-"../20240114_recalculate_pagel/pagel_ecoli/"
 
 # #merge p-values together and write to the local folder
 # system(paste("cat ",folderwithmatrices,"/*.txt > ./data/Ecoli_pagel_fitDiscrete_all.tsv", sep=""))
@@ -23,10 +23,10 @@ PagelResults<-read.csv("./data/Ecoli_pagel_fitDiscrete_all.tsv", header =F, sep=
                        col.names = paste0("V",seq_len(5)))
 
 #####read counts data in order to check results stability
-EcoliDefence<-read.csv("./data/26k_Ecoli_with_prophages.csv", header = T)
+EcoliDefence<-read.csv("./data/ecoli_filtered.csv", header = T)
 
-DefenceBySystem<-EcoliDefence %>% group_by(genome,defense_system) %>%
-  count(defense_system)
+DefenceBySystem<-EcoliDefence %>% group_by(genome,immune_system) %>%
+  count(immune_system)
 DefenceBySystemWide<-as.data.frame(DefenceBySystem %>% 
                                      pivot_wider(names_from = genome, values_from = n))
 #filter
@@ -42,7 +42,7 @@ DefenceBySystemWideBinary[is.na(DefenceBySystemWideBinary)]<-0
 DefenceBySystemWideBinary[DefenceBySystemWideBinary>0]<-1
 
 DefenceBySystemWideBinary$sum<-rowSums(DefenceBySystemWideBinary)
-DefenceBySystemWideBinary$System<-DefenceBySystemWide$defense_system
+DefenceBySystemWideBinary$System<-DefenceBySystemWide$immune_system
 
 DefenseCounts<-DefenceBySystemWideBinary[,c("System","sum")]
 
@@ -171,13 +171,13 @@ ResultsToPlot$Signif<-ifelse(ResultsToPlot$Bonferroni == "Y","**",
                              ifelse(ResultsToPlot$Benjamini.Hochberg == "Y","*",""))
 #######
 ###New added piece (2023/04/03), color labels by class
-AllClass<-unique(EcoliDefence[,c("defense_system","class")])
-AllClassFiltered<-subset(AllClass,AllClass$defense_system %in% rownames(PagelWideSorted))
+AllClass<-unique(EcoliDefence[,c("immune_system","class")])
+AllClassFiltered<-subset(AllClass,AllClass$immune_system %in% rownames(PagelWideSorted))
 ColorsToClasses<-data.frame(class=unique(AllClassFiltered$class),
                             colors=c("#1b9e77","#d95f02","#7570b3",
                                      "#000000","#e7298a","#a6761d","#e6ab02"))
 AllClassFilteredCol<-merge(AllClassFiltered,ColorsToClasses, by="class")
-AllClassFilteredColSorted<-AllClassFilteredCol[order(match(AllClassFilteredCol$defense_system,SystemOrder)),]
+AllClassFilteredColSorted<-AllClassFilteredCol[order(match(AllClassFilteredCol$immune_system,SystemOrder)),]
 
 #Order labels by abundance
 ResultsToPlot$System.I<-factor(ResultsToPlot$System.I,levels=SystemOrder)
@@ -195,7 +195,8 @@ heatmap<-ggplot(data = ResultsToPlot, aes(System.I,System.II))+
             #color = "#525252",
             vjust=0.8,
             hjust=0.5,
-            size=2.2)+
+            size=2,
+            family="ArielMT")+
   guides(alpha="none")+
   theme_classic()+
   scale_fill_gradient2(high= "#bf812d", mid="white", low="#35978f", name="",

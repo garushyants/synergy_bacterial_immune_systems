@@ -14,7 +14,7 @@
   
   ####
   #Read phylogenetic tree
-  tree <- read.tree("../data/Ecoli_tree_rapidnj.rM2.treeshrink_corrected.nwk")
+  tree <- read.tree("./data/Ecoli_tree_rapidnj.rM2.treeshrink_corrected.nwk")
   ###do proper names on the tree that match the data
   newtipnames<-tree$tip.label
   rep_str = c("'"='','.fna'='')
@@ -24,12 +24,12 @@
   
   #####
   #Read occurence data
-  EcoliDefense<-read.csv("../data/26k_Ecoli_with_prophages.csv", header = T)
+  EcoliDefense<-read.csv("./data/ecoli_filtered.csv", header = T)
   
-  DefenseBySystem<-EcoliDefense %>% group_by(genome,defense_system) %>%
-    count(defense_system)
+  DefenseBySystem<-EcoliDefense %>% group_by(genome,immune_system) %>%
+    count(immune_system)
   DefenseBySystemWide<-as.data.frame(DefenseBySystem %>% 
-                                       pivot_wider(names_from = defense_system, values_from = n))
+                                       pivot_wider(names_from = immune_system, values_from = n))
   #Filter data to the set only present on the tree
   DefenseBySystemWideFiltered<-subset(DefenseBySystemWide, DefenseBySystemWide$genome %in% newtipnames)
   
@@ -68,12 +68,12 @@
     get_location<-function(sys)
     {
       #sys<-dsys2
-      Dsys1Location<-subset(EcoliDefense,EcoliDefense$defense_system %in% sys & 
+      Dsys1Location<-subset(EcoliDefense,EcoliDefense$immune_system %in% sys & 
                               EcoliDefense$genome %in% DsysDfforplot$genome)
       Dsys1Location$Location<-ifelse(Dsys1Location$prophage_within == "full",
                                      "prophage",
                                      Dsys1Location$seqid_type)
-      Dsys1LocationLong<-Dsys1Location[,c("genome","Location","defense_system")]
+      Dsys1LocationLong<-Dsys1Location[,c("genome","Location","immune_system")]
       Dsys1LocationWide<-dcast(Dsys1LocationLong,genome~Location)
       values<-colnames(Dsys1LocationWide)[2:ncol(Dsys1LocationWide)]
       for (v in values)
@@ -125,11 +125,11 @@
                           ncol = 2)
     PlotToSave
     
-    ggsave(paste("../figures/Ecoli_phylogenetic_trees/",dsys1,"_",dsys2,"_tree.png", sep=""),
+    ggsave(paste("./figures/Ecoli_phylogenetic_trees/",dsys1,"_",dsys2,"_tree.png", sep=""),
            PlotToSave,
            width=3600,height=2700, units ="px",dpi=300)
     
-    ggsave(paste("../figures/Ecoli_phylogenetic_trees/",dsys1,"_",dsys2,"_tree.svg", sep=""),
+    ggsave(paste("./figures/Ecoli_phylogenetic_trees/",dsys1,"_",dsys2,"_tree.svg", sep=""),
            PlotToSave,
            width=3600,height=2700, units ="px",dpi=300)
     

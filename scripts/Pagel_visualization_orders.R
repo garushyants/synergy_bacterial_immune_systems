@@ -10,14 +10,14 @@ library(writexl)
 
 path<-getwd()
 setwd(path)
-setwd("../")
+#setwd("../")
 
 datasets<-c("pseu","baci","burk","enter")
-folderWithRawData<-"../20230314_pagel_other_datasets/"
+folderWithRawData<-"../20240114_recalculate_pagel/"
 for (dt in datasets) {
   #dt<-datasets[1]
   folderwithmatrices<-paste0(folderWithRawData,"pagel_",dt)
-  defensedata<-paste("./data/merged_",dt,"3.csv",sep="")
+  defensedata<-paste("./data/",dt,"_filtered.csv",sep="")
   treefile<-paste("./data/",dt,"tree_resavediTOL_newick.txt",sep="")
   #merge p-values together and write to the local folder
   system(paste("cat ",folderwithmatrices,"/*.txt > ","./data/",dt,"pagel_fitDiscrete_all.tsv", sep=""))
@@ -36,8 +36,8 @@ for (dt in datasets) {
   #####read counts data in order to check results stability
   DefenseDt<-read.csv(defensedata, header = T)
   
-  DefenceBySystem<-DefenseDt %>% group_by(genome,defense_system2) %>%
-    count(defense_system2)
+  DefenceBySystem<-DefenseDt %>% group_by(genome,immune_system) %>%
+    count(immune_system)
   DefenceBySystemWide<-as.data.frame(DefenceBySystem %>% 
                                        pivot_wider(names_from = genome, values_from = n))
   #filter
@@ -54,7 +54,7 @@ for (dt in datasets) {
   
   DefenceBySystemWideBinary$sum<-rowSums(DefenceBySystemWideBinary)
   
-  DefenceBySystemWideBinary$System<-DefenceBySystemWide$defense_system2
+  DefenceBySystemWideBinary$System<-DefenceBySystemWide$immune_system
   
   DefenseCounts<-DefenceBySystemWideBinary[,c("System","sum")]
   
@@ -62,10 +62,6 @@ for (dt in datasets) {
   mincount<-0.01 #Filtering most rare and most common systems
   SystemsToKeep<-DefenseCounts[(DefenseCounts$sum > length(newtipnames)*mincount) &
                                  (DefenseCounts$sum < length(newtipnames)*(1-mincount)),]$System
-  
-  # filter<-sqrt(length(newtipnames))
-  # SystemsToKeep<-DefenseCounts[(DefenseCounts$sum > filter) &
-  #                                (DefenseCounts$sum < (length(newtipnames)-filter)),]$System
   
   ###
   #Get vector of systems ordered by abundance
@@ -215,17 +211,19 @@ for (dt in datasets) {
               aes(fill = direction, 
               alpha = 1-Pagel.p.value))+
     geom_text(aes(label=Signif),
-              size=4,
+              size=3,
               color="white",
               vjust=0.8,
               hjust=0.5,
+              family="ArielMT",
               inherit.aes = TRUE)+
     guides(alpha="none")+
     theme_classic()+
     scale_fill_gradient2(high= "#bf812d", mid="white", low="#35978f", name ="",
                          labels= c("Mutually exclusive","","","","Co-occuring"))+
-    theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5, size=12),
-          axis.text.y = element_text(size=12),
+    theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5, size=12,
+                                     family="ArielMT"),
+          axis.text.y = element_text(size=12, family="ArielMT"),
           axis.title = element_blank(),
           legend.key.size = unit(0.5, 'cm'))
   heatmap

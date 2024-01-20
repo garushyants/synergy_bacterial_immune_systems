@@ -8,7 +8,7 @@ library(ggh4x)
 
 path<-getwd()
 setwd(path)
-setwd("../")
+#setwd("../")
 ###Read xls files for all five datasets
 
 datasets<-c("pseu","baci","burk","enter")

@@ -13,7 +13,7 @@ setwd(path)
 
 #####
 #Read clades
-setwd("../data/Ecoli_phylogroups/")
+setwd("./data/Ecoli_phylogroups/")
 treesfiles<-c("Ecoli_A.nwk","Ecoli_B1.nwk","Ecoli_B21.nwk",
               "Ecoli_B22.nwk","Ecoli_C.nwk","Ecoli_E1.nwk",
               "Ecoli_E2.nwk")
@@ -47,7 +47,7 @@ TipsWeightsDf<-data_frame(id = names(TipWeights), TipWeights) %>%
 #Read defense systems data
 setwd("../")
 
-EcoliDefense<-read.csv("26k_Ecoli_with_prophages.csv", header = T)
+EcoliDefense<-read.csv("ecoli_filtered.csv", header = T)
 
 EcoliDefense$location<-ifelse(EcoliDefense$prophage_within=="full",
                               paste("prophage",EcoliDefense$seqid_type),
@@ -55,10 +55,10 @@ EcoliDefense$location<-ifelse(EcoliDefense$prophage_within=="full",
 
 EcoliDefense$length<-abs(EcoliDefense$end - EcoliDefense$start) +1
 
-DefenseBySystem<-EcoliDefense %>% group_by(genome,defense_system) %>%
-  count(defense_system)
+DefenseBySystem<-EcoliDefense %>% group_by(genome,immune_system) %>%
+  count(immune_system)
 DefenseBySystemWide<-as.data.frame(DefenseBySystem %>% 
-                                     pivot_wider(names_from = defense_system, values_from = n))
+                                     pivot_wider(names_from = immune_system, values_from = n))
 DefenseBySystemWide[is.na(DefenseBySystemWide)]<-0
 
 #filter
@@ -96,21 +96,21 @@ DefenseBySystemWithPhyloWithoutCutoff<-merge(DefenseBySystemWideOnly7phylo,Phylo
 # 
 
 #####Transform back to long
-DefWithoutCutoffLong<-gather(DefenseBySystemWithPhyloWithoutCutoff,defense_system,count,
+DefWithoutCutoffLong<-gather(DefenseBySystemWithPhyloWithoutCutoff,immune_system,count,
        `CRISPR I-E`:`Druantia II`)
 
-DefFiltLong<-gather(DefenseBySystemWithPhylo,defense_system,count,
+DefFiltLong<-gather(DefenseBySystemWithPhylo,immune_system,count,
                              `CRISPR I-E`:`Lamassu I`)
 
 CountPerPhylogroup<-DefWithoutCutoffLong %>% group_by(id)%>%
   summarise(total=length(unique(genome)))
-CountSystemsPerPhylo<-DefFiltLong %>% group_by(id,defense_system)%>%
+CountSystemsPerPhylo<-DefFiltLong %>% group_by(id,immune_system)%>%
   summarise(systemtotal=sum(count))
 
 
 ForPlotRaw<-merge(CountSystemsPerPhylo,CountPerPhylogroup,by="id")
 ForPlotRaw$perc<-ForPlotRaw$systemtotal*100/ForPlotRaw$total
-ForPlotRaw$defense_system<-factor(ForPlotRaw$defense_system,
+ForPlotRaw$immune_system<-factor(ForPlotRaw$immune_system,
                                      levels=SystemOrder)
 ###Systems counts by genome per phylogroup
 SysPerGenomePlot<-DefWithoutCutoffLong %>% group_by(id,genome)%>%
@@ -246,7 +246,7 @@ ggsave("../figures/Ecoli_phylogroups/SystemsNumVsMedianLengthPerGenome_raw.png",
 
 
 ####Plot Raw counts
-LongPlotFacet<-ggplot(ForPlotRaw,aes(y=defense_system,x=perc, fill=id))+
+LongPlotFacet<-ggplot(ForPlotRaw,aes(y=immune_system,x=perc, fill=id))+
   geom_bar(stat="identity", position=position_dodge())+
   scale_fill_manual(values=c("#a6cee3","#1f78b4","#b2df8a",
                              "#33a02c","#fb9a99","#cab2d6",
@@ -304,7 +304,7 @@ ggsave("../figures/Ecoli_phylogroups/SystemsByPhylogroup_LongPlot_raw_cutoff005.
 do_chisquare<-function(system)
 {
   #system<-"Druantia III"
-  SysLong<-subset(ForPlotRaw, ForPlotRaw$defense_system == system)
+  SysLong<-subset(ForPlotRaw, ForPlotRaw$immune_system == system)
   SysLong$absent<-SysLong$total-SysLong$systemtotal
   
   #Do Chi-Squared test for homogeneity
@@ -324,6 +324,7 @@ do_chisquare("Druantia III"),
 do_chisquare("Retron I-C"),
 do_chisquare("AbiE"),
 do_chisquare("CRISPR I-F"),
+do_chisquare("CRISPR I-E"),
 do_chisquare("Thoeris I"),
 do_chisquare("Septu I"),
 do_chisquare("qatABCD"),
@@ -336,22 +337,22 @@ quote = F, row.names = F)
 #########
 ##Add info about location
 
-DefFiltLongWithLoc<-merge(DefFiltLong,EcoliDefense[,c("genome","defense_system","location")],
-      by=c("genome","defense_system"))
-SysSumPhylo<-DefFiltLongWithLoc%>% group_by(id,defense_system)%>%
+DefFiltLongWithLoc<-merge(DefFiltLong,EcoliDefense[,c("genome","immune_system","location")],
+      by=c("genome","immune_system"))
+SysSumPhylo<-DefFiltLongWithLoc%>% group_by(id,immune_system)%>%
   summarise(sum=sum(count))
 PreForPlotRawWithLoc<-DefFiltLongWithLoc%>%
-  group_by(id,defense_system,location) %>%
+  group_by(id,immune_system,location) %>%
   summarise(loccount=n())
-ForPlotRawWithLoc<-merge(PreForPlotRawWithLoc,SysSumPhylo, by=c("id","defense_system"))
+ForPlotRawWithLoc<-merge(PreForPlotRawWithLoc,SysSumPhylo, by=c("id","immune_system"))
 
 ForPlotRawWithLoc$perc<-ForPlotRawWithLoc$loccount*100/ForPlotRawWithLoc$sum
-ForPlotRawWithLoc$defense_system<-factor(ForPlotRawWithLoc$defense_system,
+ForPlotRawWithLoc$immune_system<-factor(ForPlotRawWithLoc$immune_system,
                                          levels=SystemOrder)
 
 ##plot
 SystemsByPhylogroupByLocation<-ggplot(data=ForPlotRawWithLoc)+
-  geom_col(aes(y=defense_system,x=perc,fill=location,
+  geom_col(aes(y=immune_system,x=perc,fill=location,
                color=location))+
   facet_wrap(~id, nrow=1)+
   scale_fill_manual(values=c("#742c24",
@@ -441,17 +442,17 @@ ggsave("../figures/Ecoli_phylogroups/SystemsByPhylogroup_LongPlotFacet_weight_cu
 #Long Facet but based on systems location
 
 
-DefSysLocWithPhylo<-merge(EcoliDefense[,c("genome","defense_system","location")],TipsWeightsDf, by.x="genome",
+DefSysLocWithPhylo<-merge(EcoliDefense[,c("genome","immune_system","location")],TipsWeightsDf, by.x="genome",
                                 by.y = "V1")
-DefSysLocWithPhyloFilt<-subset(DefSysLocWithPhylo,DefSysLocWithPhylo$defense_system %in% colnames(DefenseBySystem7phyloFilt))
-SysSumPhyloWithW<-DefSysLocWithPhyloFilt%>% group_by(id,defense_system)%>%
+DefSysLocWithPhyloFilt<-subset(DefSysLocWithPhylo,DefSysLocWithPhylo$immune_system %in% colnames(DefenseBySystem7phyloFilt))
+SysSumPhyloWithW<-DefSysLocWithPhyloFilt%>% group_by(id,immune_system)%>%
   summarise(sum=sum(V2))
 
-DefSysLocWithPhyloPerc<-merge(DefSysLocWithPhyloFilt,SysSumPhyloWithW, by=c("id","defense_system"))
+DefSysLocWithPhyloPerc<-merge(DefSysLocWithPhyloFilt,SysSumPhyloWithW, by=c("id","immune_system"))
 DefSysLocWithPhyloPerc$perc<-DefSysLocWithPhyloPerc$V2*100/DefSysLocWithPhyloPerc$sum
 
 SystemsByPhylogroupByLocationWeights<-ggplot(data=DefSysLocWithPhyloPerc)+
-  geom_col(aes(y=defense_system,x=perc,fill=location,
+  geom_col(aes(y=immune_system,x=perc,fill=location,
                color=location))+
   facet_wrap(~id, nrow=1)+
   scale_fill_manual(values=c("#742c24",
@@ -486,21 +487,21 @@ SystemsByPhylogroupByLocationWeights
 #I have to turn raw counts into weighted counts
 
 PieChartsPerPhylogroupWide<-merge(DefenseBySystemWithPhyloWithoutCutoff, TipsWeightsDf, by.x="genome",by.y="V1", all.x=T)
-PieChartsPerPhylogroupWideWeights<-PieChartsPerPhylogroupWide[,c(2:120)]*PieChartsPerPhylogroupWide[,123]
+PieChartsPerPhylogroupWideWeights<-PieChartsPerPhylogroupWide[,c(2:116)]*PieChartsPerPhylogroupWide[,119]
 PieChartsPerPhylogroupWideWeights$genome<-PieChartsPerPhylogroupWide$genome
 PieChartsPerPhylogroupWideWeights$id<-PieChartsPerPhylogroupWide$id.x
 
 #write_xlsx(PieChartsPerPhylogroupWideWeights,"Ecoli_7phylogroups_DefenseSystems_counts_weights.xlsx")
 
-PieChartsPerPhylogroupSummary<-PieChartsPerPhylogroupWideWeights[,c(1:119,121)] %>% group_by(id) %>%
+PieChartsPerPhylogroupSummary<-PieChartsPerPhylogroupWideWeights[,c(1:115,117)] %>% group_by(id) %>%
   summarise(across(everything(), sum))
-PieChartsPerPhylogroupSummary$sum<-rowSums(PieChartsPerPhylogroupSummary[,c(2:120)])
-PieChartsPerPhylogroupSummaryLong<-gather(PieChartsPerPhylogroupSummary, 'System','Weight',2:120)
+PieChartsPerPhylogroupSummary$sum<-rowSums(PieChartsPerPhylogroupSummary[,c(2:116)])
+PieChartsPerPhylogroupSummaryLong<-gather(PieChartsPerPhylogroupSummary, 'System','Weight',2:116)
 PieChartsPerPhylogroupSummaryLongFilt<-subset(PieChartsPerPhylogroupSummaryLong,
                                               PieChartsPerPhylogroupSummaryLong$Weight/PieChartsPerPhylogroupSummaryLong$sum > 0.03)
 
 Accounted<-PieChartsPerPhylogroupSummaryLongFilt %>% group_by(id) %>% summarize(AccountedSum=sum(Weight))
-NotAccounted<-merge(Accounted,PieChartsPerPhylogroupSummary[,c(1,121)], by="id")
+NotAccounted<-merge(Accounted,PieChartsPerPhylogroupSummary[,c(1,117)], by="id")
 colnames(NotAccounted)[3]<-"AllSum"
 NotAccounted$System<-rep("other",length(NotAccounted$id))
 NotAccounted$sum<-NotAccounted$AllSum - NotAccounted$AccountedSum

@@ -16,7 +16,7 @@ path<-getwd()
 setwd(path)
 
 ###Create folder to store results
-folderForOutput<-"../figures/cooccurence_vs_genome_distance"
+folderForOutput<-"./figures/cooccurence_vs_genome_distance"
 
 if (!dir.exists(folderForOutput)){
   dir.create(folderForOutput)
@@ -28,7 +28,7 @@ if (!dir.exists(folderForOutput)){
 ###Compile data
 
 ###read Pagel results for E. coli dataset
-Pagel_results<-read_xlsx("../data/Ecoli_pagel_all_results_with_direction.xlsx")
+Pagel_results<-read_xlsx("./data/Ecoli_pagel_all_results_with_direction.xlsx")
 
 Pagel_results$pair<-paste(Pagel_results$System.I,
                                     Pagel_results$System.II)
@@ -46,12 +46,12 @@ Pagel_results_signifNeg<-subset(Pagel_results, (Pagel_results$Bonferroni=="Y" &
 #We work later on with Enterobacteriales dataset, in particular
 #with subset of full E.coli genomes, Shigellas are considered E.coli
 ###Read main file with data
-SystemsLocation<-read.csv("../data/merged_enter3.csv", header=T)
+SystemsLocation<-read.csv("./data/enter_filtered.csv", header=T)
 ###Get final tree for Enterobacteriales to get read of contaminated and strange genomes
-tree <- read.tree("../data/entertree_resavediTOL_newick.txt")
+tree <- read.tree("./data/entertree_resavediTOL_newick.txt")
 tipnames<-tree$tip.label
 ###read Genbank assembly summary to filter E.coli from whole Enterobacteriales dataset 
-AssemblySummary<-read.csv("../data/cooccurence_vs_genome_distance//Escherichia_assembly_summary_genbank.txt", header = F,
+AssemblySummary<-read.csv("./data/cooccurence_vs_genome_distance/Escherichia_assembly_summary_genbank.txt", header = F,
                           sep="\t")
 #remove contaminated
 SystemsLocationNoCont<-subset(SystemsLocation, SystemsLocation$genome %in% tipnames)
@@ -60,7 +60,7 @@ SystemsLocationNoCont<-subset(SystemsLocation, SystemsLocation$genome %in% tipna
 #################################
 ###Because chromosomes are circular we need to know all contigs lengths to be able to calculate distances correctly
 ###This lengths are precalculated from fasta files with awk oneliner 
-ChromosomeLengths<-read.csv("../data/cooccurence_vs_genome_distance/enter_genomes_chromosome_lengths.tsv",
+ChromosomeLengths<-read.csv("./data/cooccurence_vs_genome_distance/enter_genomes_chromosome_lengths.tsv",
                             header = F, sep="\t")
 ChromosomeLengthsSep<-separate(ChromosomeLengths,V1,into = c("seqid","description"),sep = " ",extra = "merge")
 #In addition get info about location on plasmid
@@ -81,9 +81,9 @@ SystemsLocationEcoli<-subset(DefSystemsWithChrInfo, DefSystemsWithChrInfo$genome
 #################################
 #Read data from E.coli dataset to compare results
 ###systems
-Ecoli26KSystemsLocation<-read.csv("../data/26k_Ecoli_with_prophages.csv", header=T)
+Ecoli26KSystemsLocation<-read.csv("./data/ecoli_filtered.csv", header=T)
 #tree
-Ecoli26ktree <- read.tree("../data/Ecoli_tree_rapidnj.rM2.treeshrink_corrected.nwk")
+Ecoli26ktree <- read.tree("./data/Ecoli_tree_rapidnj.rM2.treeshrink_corrected.nwk")
 Finaltips<-gsub(".fna","",Ecoli26ktree$tip.label)
 Ecoli26KSystemsLocationFiltered<-subset(Ecoli26KSystemsLocation, 
                                         Ecoli26KSystemsLocation$genome %in% Finaltips)
@@ -95,7 +95,7 @@ Ecoli26KSystemsLocationFiltered<-subset(Ecoli26KSystemsLocation,
 #############
 #Check how often systems are present on chromosomes
 ChrVsPlsmPlot<-ggplot(SystemsLocationEcoli)+
-  geom_bar(aes(x=defense_system2,
+  geom_bar(aes(x=immune_system,
                y = ..count..,
                group=as.factor(plasmid),
                fill=as.factor(plasmid)),
@@ -120,7 +120,7 @@ ggsave("EcoliComplete_ChromosmeVsPlasmid.svg",
 ###Draw the same for 26k Ecoli
 
 Ecoli26kChrVsPlsmPlot<-ggplot(Ecoli26KSystemsLocationFiltered)+
-  geom_bar(aes(x=defense_system,
+  geom_bar(aes(x=immune_system,
                y = ..count..,
                group=as.factor(seqid_type),
                fill=as.factor(seqid_type)),
@@ -143,7 +143,7 @@ ggsave("Ecoli26k_ChromosmeVsPlasmid.svg",
 
 ###check the same plasmid thing for the whole Enterobacteriales dataset
 EnterChrVsPlsmPlot<-ggplot(DefSystemsWithChrInfo)+
-  geom_bar(aes(x=defense_system2,
+  geom_bar(aes(x=immune_system,
                y = ..count..,
                group=as.factor(plasmid),
                fill=as.factor(plasmid)),
@@ -165,7 +165,7 @@ EnterChrVsPlsmPlot
 ####Check how often systems are within prophages for 26k E.coli dataset 
 ####for which we have such data
 Ecoli26kChrVsPrPhPlot<-ggplot(Ecoli26KSystemsLocationFiltered)+
-  geom_bar(aes(x=defense_system,
+  geom_bar(aes(x=immune_system,
                y = ..count..,
                group=as.factor(prophage_within),
                fill=as.factor(prophage_within)),
@@ -189,7 +189,7 @@ Ecoli26kChrVsPrPhPlot
 
 ####Let's calculate some background distances as it was done previously
 #Calculate distances between all systems
-ContigsToConsiderAll<-SystemsLocationEcoli %>% group_by(seqid) %>% summarize(count=length(defense_system2))
+ContigsToConsiderAll<-SystemsLocationEcoli %>% group_by(seqid) %>% summarize(count=length(immune_system))
 #remove contigs with one system
 ContigsToConsider<-subset(ContigsToConsiderAll, ContigsToConsiderAll$count >1)
 #get data only for contigs with more than one system
@@ -207,11 +207,11 @@ NearestDistances<-SetToCalculateDistances %>%
   mutate(mindist=ifelse(is.na(lead(distance)), distance,
                         ifelse(distance>lead(distance,n=1, default=NA),
                         lead(distance,n=1, default=NA),distance)),
-         paired=ifelse(is.na(lead(distance)), lag(defense_system2),
+         paired=ifelse(is.na(lead(distance)), lag(immune_system),
                        ifelse(distance>lead(distance,n=1, default=NA),
-                        lead(defense_system2),
-                       lag(defense_system2)))) %>%
-  mutate(pairOrdered=paste(pmin(defense_system2,paired),pmax(defense_system2,paired)))
+                        lead(immune_system),
+                       lag(immune_system)))) %>%
+  mutate(pairOrdered=paste(pmin(immune_system,paired),pmax(immune_system,paired)))
 
 
 NearestDistancesShort<-NearestDistances[,c("genome","seqid","mindist","pairOrdered")]
@@ -248,9 +248,9 @@ getPairDistance<-function(sysI, sysII)
 {
   #sysI<-"RM I"
   #sysII<-"RM II"
-  SystemPairsDfAll<-subset(SetToCalculateDistances, SetToCalculateDistances$defense_system2 %in% c(sysI,sysII))
+  SystemPairsDfAll<-subset(SetToCalculateDistances, SetToCalculateDistances$immune_system %in% c(sysI,sysII))
   #filter contigs with only one system
-  PairContigsAll<-SystemPairsDfAll %>% group_by(seqid,genome) %>%summarize(count=length(unique(defense_system2)))
+  PairContigsAll<-SystemPairsDfAll %>% group_by(seqid,genome) %>%summarize(count=length(unique(immune_system)))
   PairContigsForCount<-subset(PairContigsAll, PairContigsAll$count>1)
   
   SystemPairsDf<-subset(SystemPairsDfAll, SystemPairsDfAll$seqid %in% PairContigsForCount$seqid)
@@ -263,9 +263,9 @@ getPairDistance<-function(sysI, sysII)
   PairNearestDistances$System.I<-rep(sysI, length(PairNearestDistances$seqid))
   PairNearestDistances$System.II<-rep(sysII, length(PairNearestDistances$seqid))
   #remove distances between systems of the same type
-  PairNearestDistances$prev<-lag(PairNearestDistances$defense_system2)
+  PairNearestDistances$prev<-lag(PairNearestDistances$immune_system)
   PairNearestDistancesClear<-subset(PairNearestDistances,
-                                    PairNearestDistances$defense_system2 != PairNearestDistances$prev &
+                                    PairNearestDistances$immune_system != PairNearestDistances$prev &
                                       !is.na(PairNearestDistances$distance))
   return(PairNearestDistancesClear)
 }
@@ -357,7 +357,7 @@ SystemsSignif<-subset(SystemsMedian, SystemsMedian$test*length(SystemsMedian$Sys
                         SystemsMedian$count > 10)
 
 ##save to file
-write_xlsx(SystemsSignif, path=paste("../data/cooccurence_vs_genome_distance/PositiveSystemsSignifCloser.xlsx", sep="/"))
+write_xlsx(SystemsSignif, path=paste("./data/cooccurence_vs_genome_distance/PositiveSystemsSignifCloser.xlsx", sep="/"))
 
 ForPlotSubset<-subset(PairDistancesDf, paste(PairDistancesDf$System.I,PairDistancesDf$System.II) %in% 
                         paste(SystemsSignif$System.I,SystemsSignif$System.II))
@@ -387,13 +387,13 @@ DrawPairTree<-function(sysI,sysII){
   #sysII<-"Druantia III"
   #subset initial system locations
   PairSystemLocationLong<-subset(SystemsLocationEcoli,
-                                 SystemsLocationEcoli$defense_system2 %in% c(sysI,sysII))[,c("genome","seqid","defense_system2")]
+                                 SystemsLocationEcoli$immune_system %in% c(sysI,sysII))[,c("genome","seqid","immune_system")]
   
   PairSystemLocationLongForTree<-PairSystemLocationLong %>% 
     group_by(genome) %>%
-    dplyr::summarise(system2 = ifelse(length(unique(defense_system2))>1,"both",defense_system2),
-                     system = ifelse(length(unique(defense_system2))>1,0,
-                                     ifelse(defense_system2[1] == sysI,1,2)),
+    dplyr::summarise(system2 = ifelse(length(unique(immune_system))>1,"both",immune_system),
+                     system = ifelse(length(unique(immune_system))>1,0,
+                                     ifelse(immune_system[1] == sysI,1,2)),
                      chromosomes2= ifelse(length(unique(seqid))>1,"different","same"),
                      chromosomes = ifelse(length(unique(seqid))>1,0,1))
   names(PairSystemLocationLongForTree)[1]<-"label"
