@@ -27,7 +27,7 @@ Scripts *Ecoli26k_tree_phylogroups_defense_systems.R* and *Visualize_phylogeneti
 
 *SynergisticVsAntagonistic_4pairs.R* Analyses EOP and liquid assay experiments data for four pairs of immune systems: Zorya II + Druantia III, tmn + Gabija, Kiwa + ietAS, and ietAS + Zorya II
 
-*defense_distribution_visulization.R* Visuslize the data for defense system distribution, including Figure 1B, 1C, S2B, S2C, and S4.
+*defense_distribution_visulization.R* Visualize the data for defense system distribution, including Figure 1B, 1C, S2B, S2C, and S4.
 
 #### **data**
 Contains data required to run the scripts above and some of the outputs
@@ -40,9 +40,9 @@ Contains data required to run the scripts above and some of the outputs
 
 *Table_S3_defense_cooccurrence_in_datasets.xlsx* contains the results of defense system co-occurrence calculation for *E. coli*, Enterobacteriales, Burkholderiales, Bacillales and Pseudomonadales. This is the combination of *Ecoli_pagel_all_results_with_direction.xlsx*, *enter_pagel_all_results_with_direction_0.01.xlsx*, *pseu_pagel_all_results_with_direction_0.01.xlsx*, *baci_pagel_all_results_with_direction_0.01.xlsx* and *burk_pagel_all_results_with_direction_0.01.xlsx*. [Figure 2B and 4]
 
-*F2C_Distances_to_closest_system_control_All.xlsx* calculates the distance between a defense system and its closest systems in the *E.coli* dataset with complete genomes only. [Figure 2C]
+*Distances_to_closest_system_control_All.xlsx* calculates the distance between a defense system and its closest systems in the *E.coli* dataset with complete genomes only. [Figure 2C]
 
-*F2D_Distances_between_positive_significant_pairs.xlsx* calculates the distance between a defense system and its positive co-occurreing systems in the *E.coli* dataset with complete genomes only. [Figure 2D and S2B]
+*Distances_between_positive_significant_pairs.xlsx* calculates the distance between a defense system and its positive co-occurreing systems in the *E.coli* dataset with complete genomes only. [Figure 2D and S2B]
 
 *EOP_20230531.xlsx* contains the results of Efficiency of Plating assay. [Figure 3B and S3A]
 
@@ -54,9 +54,9 @@ Contains data required to run the scripts above and some of the outputs
 
 *F6_EOP.xlsx* contains the results of Efficiency of Plating assay investigating the cooperation of tmn and other ATPase domain containing systems. [Figure 6]
 
-*FS1B_26k_location_system.csv* contains the raw count and percentage of defense systems' location. [Figure S1B]
+*FS1B_defense_location_percentage.csv* contains the raw count and percentage of defense systems' location. [Figure S1B]
 
-*FS2A_ecoli_significance_pair_frequency.csv* quantifies the co-occurring pattern between different systems, highlighting their co-occurrence and significance. [Figure S2A] 
+*FS2B_significant_pair_frequency.csv* quantifies the co-occurring pattern between different systems, highlighting their co-occurrence and significance. [Figure S2A] 
 
 *FS2C_Distances_between_positive_significant_pairs_location2.csv* quantifies the location pattern of each co-occuring pair. [Figure S2C]
 

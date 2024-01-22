@@ -1,0 +1,171 @@
+system,location,frequency,percentage
+RM,chromosome,67048,0.9083740905827045
+CRISPR,chromosome,16486,0.999878699660359
+AbiE,chromosome,4979,0.9686770428015564
+RM,plasmid,3774,0.051130590291419975
+Retron,chromosome,3364,0.820287734698854
+Druantia,chromosome,3238,0.9990743597655045
+DRT,chromosome,2941,0.9096814104546861
+CBASS,chromosome,2812,0.5602709703128114
+Gabija,plasmid,2736,0.6822942643391521
+Zorya,chromosome,2619,0.9988558352402745
+Dnd,chromosome,2603,1.0
+Septu,chromosome,2348,0.9247735328869634
+RM,prophage in chromosome,2152,0.029155545921339638
+CBASS,plasmid,2103,0.4190077704722056
+tmn,plasmid,1756,0.8727634194831014
+dXTPase,chromosome,1557,0.7808425275827482
+AVAST,chromosome,1433,0.9534264803725881
+Kiwa,chromosome,1389,0.8312387791741472
+BREX,chromosome,1337,0.910142954390742
+Thoeris,chromosome,1327,0.9595083152566883
+Gabija,chromosome,1251,0.31197007481296757
+Hachiman,chromosome,1204,0.9844644317252658
+Dpd,chromosome,1152,0.9991326973113617
+qatABCD,chromosome,1149,0.9973958333333334
+ietAS,chromosome,1074,0.614768174012593
+PifA,plasmid,866,0.7017828200972447
+Mokosh,chromosome,857,0.9988344988344988
+darTG,chromosome,848,0.9411764705882353
+RM,prophage in plasmid,837,0.01133977320453591
+hhe,chromosome,760,0.9200968523002422
+AbiD,chromosome,733,0.7683438155136268
+ietAS,prophage in chromosome,654,0.3743560389238695
+BstA,prophage in chromosome,640,0.6280667320902846
+ppl,plasmid,552,0.8389057750759878
+Retron,prophage in chromosome,540,0.13167520117044623
+BstA,chromosome,379,0.3719332679097154
+PrrC,chromosome,378,0.945
+PifA,chromosome,360,0.2917341977309562
+GAO_19,chromosome,350,0.44642857142857145
+AbiU,chromosome,313,0.6137254901960785
+PARIS,chromosome,283,0.5505836575875487
+AbiL,chromosome,281,0.6189427312775331
+DRT,prophage in chromosome,265,0.08196721311475409
+tmn,chromosome,256,0.1272365805168986
+Kiwa,prophage in chromosome,244,0.14602034709754638
+mza,chromosome,243,1.0
+gop_beta_cll,chromosome,233,1.0
+Lamassu,chromosome,232,0.8689138576779026
+SoFIC,chromosome,225,1.0
+Ssp,chromosome,224,1.0
+GAO_19,plasmid,219,0.27933673469387754
+dsr,chromosome,219,0.6049723756906077
+Lit,chromosome,217,0.6615853658536586
+GAO_19,prophage in chromosome,215,0.274234693877551
+AbiD,plasmid,199,0.20859538784067086
+Retron,plasmid,197,0.04803706413069983
+PsyrTA,chromosome,192,1.0
+Shedu,chromosome,188,0.562874251497006
+AbiU,prophage in chromosome,187,0.36666666666666664
+dXTPase,plasmid,186,0.09327983951855567
+RexAB,chromosome,181,0.41043083900226757
+RexAB,prophage in chromosome,180,0.40816326530612246
+dXTPase,prophage in plasmid,174,0.08726178535606821
+GAO_29,chromosome,162,1.0
+AbiE,plasmid,161,0.03132295719844358
+PARIS,prophage in chromosome,158,0.30739299610894943
+AbiH,chromosome,150,0.8426966292134831
+AbiQ,plasmid,149,0.9197530864197531
+Septu,prophage in chromosome,145,0.05710909807010634
+Helicase-DUF2290,chromosome,143,0.9662162162162162
+dsr,prophage in chromosome,143,0.39502762430939226
+BREX,plasmid,132,0.089857045609258
+dCTPdeaminase,chromosome,132,0.6984126984126984
+3HP,chromosome,117,0.52
+Lit,prophage in chromosome,111,0.3384146341463415
+3HP,prophage in chromosome,108,0.48
+TIR-NLR,chromosome,107,0.963963963963964
+CBASS,prophage in chromosome,102,0.020322773460848775
+old,prophage in chromosome,100,0.5747126436781609
+AbiL,plasmid,99,0.21806167400881057
+DprA-PRTase,chromosome,97,0.5672514619883041
+Shedu,plasmid,88,0.2634730538922156
+ppl,chromosome,83,0.12613981762917933
+RexAB,plasmid,80,0.18140589569160998
+Hydrolase-TM,chromosome,80,1.0
+dXTPase,prophage in chromosome,77,0.03861584754262788
+old,chromosome,74,0.42528735632183906
+AbiL,prophage in chromosome,74,0.16299559471365638
+DprA-PRTase,prophage in chromosome,74,0.4327485380116959
+ApeA,chromosome,73,0.9358974358974359
+PARIS,plasmid,73,0.14202334630350194
+Pycsar,chromosome,70,0.5932203389830508
+RADAR,chromosome,69,1.0
+tin,prophage in chromosome,67,0.5877192982456141
+Shedu,prophage in chromosome,58,0.17365269461077845
+DUF4238,prophage in chromosome,58,0.5631067961165048
+darTG,prophage in chromosome,53,0.058823529411764705
+tin,chromosome,47,0.41228070175438597
+Septu,plasmid,46,0.01811736904293029
+Viperin,plasmid,46,0.9019607843137255
+DUF4238,chromosome,45,0.4368932038834951
+Borvo,chromosome,44,0.7857142857142857
+GAO_20,chromosome,43,1.0
+hhe,prophage in chromosome,42,0.05084745762711865
+Shango,chromosome,40,0.9523809523809523
+dCTPdeaminase,prophage in chromosome,40,0.21164021164021163
+Kiwa,plasmid,38,0.022740873728306403
+Wadjet,chromosome,36,1.0
+hma,chromosome,36,0.9473684210526315
+Lamassu,prophage in chromosome,35,0.13108614232209737
+Thoeris,prophage in chromosome,34,0.024584237165582067
+AVAST,plasmid,34,0.02262142381902861
+Dynamins,chromosome,34,1.0
+AVAST,prophage in chromosome,31,0.020625415834996674
+2TM-1TM-TIR,prophage in chromosome,28,0.6666666666666666
+AbiH,prophage in chromosome,28,0.15730337078651685
+DRT,plasmid,26,0.008042066192390968
+Pycsar,prophage in chromosome,26,0.22033898305084745
+hhe,plasmid,24,0.029055690072639227
+TerY-P,chromosome,24,1.0
+ppl,prophage in chromosome,23,0.034954407294832825
+Pycsar,plasmid,22,0.1864406779661017
+Argonaute,chromosome,22,1.0
+AbiD,prophage in chromosome,22,0.023060796645702306
+Thoeris,plasmid,22,0.015907447577729574
+Gabija,prophage in chromosome,21,0.005236907730673317
+ietAS,plasmid,19,0.010875787063537493
+SEFIR,plasmid,19,0.475
+RosmerTA,chromosome,19,0.76
+dCTPdeaminase,plasmid,17,0.08994708994708994
+Menshen,chromosome,16,0.8
+Hachiman,prophage in chromosome,15,0.012264922322158627
+2TM-1TM-TIR,chromosome,14,0.3333333333333333
+AbiQ,chromosome,13,0.08024691358024691
+PrrC,prophage in plasmid,13,0.0325
+SEFIR,chromosome,12,0.3
+Borvo,prophage in chromosome,12,0.21428571428571427
+AbiU,plasmid,10,0.0196078431372549
+SEFIR,prophage in chromosome,9,0.225
+ShosTA,chromosome,8,0.7272727272727273
+PifA,prophage in chromosome,8,0.006482982171799027
+RosmerTA,prophage in chromosome,6,0.24
+PrrC,plasmid,6,0.015
+Viperin,chromosome,5,0.09803921568627451
+AVAST,prophage in plasmid,5,0.00332667997338656
+ApeA,plasmid,5,0.0641025641025641
+Menshen,prophage in chromosome,4,0.2
+TIR-NLR,prophage in chromosome,4,0.036036036036036036
+Hachiman,plasmid,4,0.003270645952575634
+upx,chromosome,3,1.0
+ShosTA,prophage in chromosome,3,0.2727272727272727
+Zorya,plasmid,3,0.0011441647597254005
+PrrC,prophage in chromosome,3,0.0075
+qatABCD,plasmid,3,0.0026041666666666665
+Helicase-DUF2290,plasmid,3,0.02027027027027027
+Dazbog,chromosome,2,0.6666666666666666
+Shango,plasmid,2,0.047619047619047616
+CBASS,prophage in plasmid,2,0.0003984857541342897
+Helicase-DUF2290,prophage in chromosome,2,0.013513513513513514
+Druantia,plasmid,2,0.000617093489663684
+hma,prophage in chromosome,2,0.05263157894736842
+Gabija,prophage in plasmid,2,0.0004987531172069825
+Dazbog,prophage in chromosome,1,0.3333333333333333
+CRISPR,prophage in chromosome,1,6.0650169820475496e-05
+CRISPR,plasmid,1,6.0650169820475496e-05
+Dpd,prophage in chromosome,1,0.0008673026886383347
+PbeABCD,chromosome,1,1.0
+Druantia,prophage in chromosome,1,0.000308546744831842
+Mokosh,plasmid,1,0.0011655011655011655
+DRT,prophage in plasmid,1,0.0003093102381688834

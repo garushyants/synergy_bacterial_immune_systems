@@ -13,14 +13,15 @@ data = read_csv("/Users/wubaobei/Desktop/test/defence/results/26k/latest/phylogr
 
 result <- data |>
   group_by(phylogroup) |>
-  summarize(weighted_median = def_num[order(def_num)][cumsum(frequency) >= sum(frequency) / 2][1])
+  dplyr::summarize(weighted_median = weighted.median(def_num, frequency)+0.5)
+
 
 p <- ggplot(data, aes(x = def_num, y = frequency)) +
   geom_bar(stat = 'identity') +
   facet_wrap(phylogroup ~ ., scales = "free_x",ncol=2) +
   geom_vline(data = result, aes(xintercept = weighted_median), color = "red",  size = 0.5) +
   scale_color_manual(values = "red")+
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,family = "ArialMT",size=6),
+  theme(axis.text.x = element_text(family = "ArialMT",size=6),
         axis.text.y = element_text(family = "ArialMT",size=6),
         axis.title.x = element_blank(),
         axis.title.y = element_blank(),
@@ -32,7 +33,8 @@ p <- ggplot(data, aes(x = def_num, y = frequency)) +
         panel.border = element_rect(fill=NA,colour = "black",linewidth=0.5,linetype = "solid"),
         panel.background = element_blank(),
         legend.position="none",
-        strip.text.y = element_text(family = "ArialMT",size=6))
+        strip.text.y = element_text(family = "ArialMT",size=6))+
+  coord_cartesian(xlim = c(0, 20))
 p
 ggsave(plot=p,filename = "../figures/Ecoli_defense_distribution/F1B_ecoli_defense_amount_frequency.pdf",
        width=7,height = 11,units = "cm",device = "pdf")
@@ -63,10 +65,10 @@ p = ggplot(sorted_df, aes(x=defense_system,y=frequency,fill=class))+
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,family = "ArialMT",size=6),
         axis.text.y = element_text(family = "ArialMT",size=6),
         legend.position="none")+
-  scale_fill_manual(values=c("Abi"="#70C17F","RM"="#7CA9CC","RM-like"="#7CA9CC",
-                             "Phage nucleic acid cleavage"="#B7E1E9",
-                             "Unknown"="#000000","TA"="#C4DFA2",
-                             "Inhibition of phage transcription"="#F7ABF9"))+
+  scale_fill_manual(values=c("Abi"="#9112b4","RM"="#94b447","RM-like"="#94b447",
+                             "Phage nucleic acid cleavage"="#0072b5",
+                             "Unknown"="#333333","TA"="#ef87be",
+                             "Inhibition of phage transcription"="#6f99ad"))+
   geom_text(aes(x=defense_system,y=4e4,label=frequency),
             angle=90,vjust = -0.5,
             family = "ArialMT",size=6)
@@ -78,10 +80,10 @@ data_long = merge(data_long,defense_class,by="defense_system",all.x=TRUE)
 p = ggplot(data_long, aes(x=defense_system,y=percentage,fill=class))+
   geom_bar(stat="identity")+
   facet_grid(phylogroup~.)+
-  scale_fill_manual(values=c("Abi"="#70C17F","RM"="#7CA9CC","RM-like"="#7CA9CC",
-                             "Phage nucleic acid cleavage"="#B7E1E9",
-                             "Unknown"="#000000","TA"="#C4DFA2",
-                             "Inhibition of phage transcription"="#F7ABF9"))+
+  scale_fill_manual(values=c("Abi"="#9112b4","RM"="#94b447","RM-like"="#94b447",
+                             "Phage nucleic acid cleavage"="#0072b5",
+                             "Unknown"="#333333","TA"="#ef87be",
+                             "Inhibition of phage transcription"="#6f99ad"))+
   scale_x_discrete(limits=sorted_df$defense_system)+
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,family = "ArialMT",size=6),
         axis.text.y = element_text(family = "ArialMT",size=6),
@@ -102,7 +104,77 @@ ggsave(plot=p,filename = "../figures/Ecoli_defense_distribution/F1C_phylogroup_d
 
 
 
-##Figure S2B-the distance between cooccurring systems--------------------------
+##Figure 2C and 2D-histogram of defense system pairs--------------------------
+##positive pairs-----
+data = read_excel("./data/Distances_between_positive_significant_pairs.xlsx")
+p = ggplot(data,aes(x=distance))+
+  geom_histogram(bins = 500)+
+  scale_x_continuous(breaks=seq(0,3000000,by=500000))+
+  geom_vline(xintercept = median(data$distance),lwd=0.5,color="red",alpha=0.5)+
+  theme(panel.border = element_rect(fill=NA,colour = "black",size=1,linetype = "solid"),
+        panel.background = element_blank(),
+        axis.text.x = element_text(family = "ArialMT",size=8),
+        #axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,family = "ArialMT",size=6),
+        axis.text.y = element_text(family = "ArialMT",size=8),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.ticks = element_line(color="black",linewidth=0.4))
+p
+ggsave(plot=p,filename = "./figures/Ecoli_defense_distribution/F2D_positive_distance_histogram.png",
+       width=10,height = 3,units = "cm",device = "png")
+##all------
+data = read_excel("./data/Distances_to_closest_system_control_All.xlsx")
+p = ggplot(data,aes(x=mindist))+
+  geom_histogram(bins = 500)+
+  scale_x_continuous(breaks=seq(0,4000000,by=500000))+
+  geom_vline(xintercept = median(data$mindist),lwd=0.5,color="red")+
+  theme(panel.border = element_rect(fill=NA,colour = "black",size=1,linetype = "solid"),
+        panel.background = element_blank(),
+        axis.text.x = element_text(family = "ArialMT",size=8),
+        axis.text.y = element_text(family = "ArialMT",size=8),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.ticks = element_line(color="black",size=0.4))
+p
+ggsave(plot=p,filename = "./figures/Ecoli_defense_distribution/F2C_all_distance_histogram.png",
+       width=10,height = 3,units = "cm",device = "png")
+
+
+
+##FS1B - defense system location and percentage--------------------------
+data = read_csv("./data/FS1B_defense_location_percentage.csv")
+data1 = read_csv("./data/ecoli_filtered.csv")
+#count the frequency of defense system
+frequency_table = table(data1$system)
+sorted_frequency = sort(frequency_table,decreasing = TRUE)
+sorted_df = data.frame(Value=names(sorted_frequency),Frequency=sorted_frequency)
+sorted_df$Value = factor(sorted_df$Value,levels=sorted_df$Value)
+p = ggplot(data, aes(x=system,y=percentage,fill=location))+
+  geom_bar(stat="identity")+
+  scale_fill_manual(values=c("chromosome"="#772E25","prophage in chromosome"="#C44536",
+                             "plasmid"="#EDDDD4","prophage in plasmid"="#7f646f"))+
+  scale_x_discrete(limits=sorted_df$Value)+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,family = "ArialMT",size=6),
+        axis.text.y = element_text(family = "ArialMT",size=6),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        #legend.text = element_text(family = "ArialMT",size=6),
+        #title = element_text(family = "ArialMT",size=8),
+        #panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.ticks = element_line(color="black",linewidth=0.4),
+        panel.border = element_rect(fill=NA,colour = "black",linewidth=0.5,linetype = "solid"),
+        panel.background = element_blank(),
+        legend.position="none",
+        strip.text.y = element_text(family = "ArialMT",size=6))
+#legend.text = element_text(family = "ArialMT",size=6))
+p
+ggsave(plot=p,filename = "./figures/Ecoli_defense_distribution/FS1B_defense_location_percentage_raw.pdf",
+       width=19.5,height = 5,units = "cm",device = "pdf")
+
+
+
+##Figure S2C-the distance between cooccurring systems--------------------------
 data = read_excel("../data/F2D_Distances_between_positive_significant_pairs.xlsx")
 p = ggplot(data,aes(x=pair2,y=distance))+
   geom_violin(aes(x=pair2,y=distance),
@@ -126,7 +198,7 @@ ggsave(plot=p1,filename = "../figures/FS2B_positive_distance.pdf",
 
 
 
-##Figure S2C-the location of cooccurring defense system pairs--------------------------
+##Figure S2D-the location of cooccurring defense system pairs--------------------------
 data = read.csv("../data/FS2C_Distances_between_positive_significant_pairs_location2.csv")
 p = ggplot(data, aes(x = combination, y = percentage, fill = location)) +
   geom_bar(stat = "identity") +
