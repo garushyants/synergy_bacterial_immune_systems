@@ -15,7 +15,7 @@ setwd(path)
 
 
 #Read phylogenetic tree
-tree <- read.tree("../data/Ecoli_tree_rapidnj.rM2.treeshrink_corrected.nwk")
+tree <- read.tree("./data/Ecoli_tree_rapidnj.rM2.treeshrink_corrected.nwk")
 ###do proper names on the tree that match the data
 newtipnames<-tree$tip.label
 rep_str = c("'"='','.fna'='')
@@ -23,10 +23,10 @@ newtipnames<-str_replace_all(newtipnames,rep_str)
 tree$tip.label<-newtipnames
 
 #Read assembly_summary data
-AssemblySummary<-read.csv("../data/Ecoli_numContigs_vs_numDefence/assembly_summary_refseq_ecoli.csv", header = T)
+AssemblySummary<-read.csv("./data/Ecoli_numContigs_vs_numDefence/assembly_summary_refseq_ecoli.csv", header = T)
 AssemblySummaryFiltered<-subset(AssemblySummary, AssemblySummary$assembly_accession %in% newtipnames)
 ###Read info about phylogroups
-TenThouEcoliData<-read.csv("../data/Ecoli_phylogroups/Abram_metadata.csv", header=T)
+TenThouEcoliData<-read.csv("./data/Ecoli_phylogroups/Abram_metadata.csv", header=T)
 
 PhyloGenomesInDataset<-subset(TenThouEcoliData,
                               TenThouEcoliData$id %in% AssemblySummaryFiltered$paired_asm_comp)[,c("id","Phylogroup")]
@@ -52,7 +52,7 @@ AlltipsCorrectNames<- AlltipsCorrectNames %>% replace(is.na(.),"none")
 
 
 #Load TreeCluster clusters for preliminary branch grouping
-Clusters003<-read.csv("../data/Ecoli_phylogroups/TreeCluster_0.03_clusters", header=T, sep="\t")
+Clusters003<-read.csv("./data/Ecoli_phylogroups/TreeCluster_0.03_clusters", header=T, sep="\t")
 Clusters003$SequenceName<-str_replace(Clusters003$SequenceName,".fna","")
 ClustersOnly<-subset(Clusters003,Clusters003$ClusterNumber > 0)
 
@@ -116,15 +116,15 @@ B1refined_clade<-drop.clade(B1Cphylo,Cleaves)
 Cclade<-extract.clade(B1Cphylo,findMRCA(B1Cphylo,Cleaves,type="node"))
 #plot_clade(Cclade)
 
-# #Other important clades
-# B21phylo<-extract.clade(tree,ClusterNodes[ClusterNodes$cluster==10,"node"])
-# #plot_clade(B21phylo)
-# 
-# B22phylo<-extract.clade(tree,ClusterNodes[ClusterNodes$cluster==9,"node"])
-# #plot_clade(B22phylo)
-# 
-# Aphylo<-extract.clade(tree,ClusterNodes[ClusterNodes$cluster==16,"node"])
-# #plot_clade(Aphylo)
+#Other important clades
+B21phylo<-extract.clade(tree,ClusterNodes[ClusterNodes$cluster==10,"node"])
+#plot_clade(B21phylo)
+
+B22phylo<-extract.clade(tree,ClusterNodes[ClusterNodes$cluster==9,"node"])
+#plot_clade(B22phylo)
+
+Aphylo<-extract.clade(tree,ClusterNodes[ClusterNodes$cluster==16,"node"])
+#plot_clade(Aphylo)
 
 ####
 #Get updated node ids for phylogroups of interest
@@ -197,7 +197,7 @@ ggsave("../figures/Ecoli_phylogenetic_trees/Ecoli_tree_with_phylogroups.png",
 #information about defense systems
 ###################################
 
-Ecoli26kDefensedata<-read.csv("../data/26k_Ecoli_with_prophages.csv", header = T)
+Ecoli26kDefensedata<-read.csv("./data/ecoli_filtered.csv", header = T)
 Ecoli26kDefensedataFiltered<-subset(Ecoli26kDefensedata,
                                     Ecoli26kDefensedata$genome %in% newtipnames)
 Ecoli26kDefensedataFiltered$location<-ifelse(Ecoli26kDefensedataFiltered$prophage_within=="full",
@@ -262,9 +262,9 @@ DrawSubsample<-function(genomes)
 GenomeSubsample<-sample(unique(EcoliDefenseFiltRestructured$genome),750)
 Treesub750<-DrawSubsample(GenomeSubsample)
 Treesub750
-ggsave("../figures/Ecoli_phylogenetic_trees/Ecoli_tree_with_phylogroups_and_DefSystems_20230614_subsample750.png",
+ggsave("./figures/Ecoli_phylogenetic_trees/Ecoli_tree_with_phylogroups_and_DefSystems_20240119_subsample750.png",
        plot=Treesub750, width = 35, height=35, units = "cm", dpi=300)
-ggsave("../figures/Ecoli_phylogenetic_trees/Ecoli_tree_with_phylogroups_and_DefSystems_20230614_subsample750.svg",
+ggsave("./figures/Ecoli_phylogenetic_trees/Ecoli_tree_with_phylogroups_and_DefSystems_20240119_subsample750.svg",
        plot=Treesub750, width = 35, height=35, units = "cm", dpi=300)
 
 ######################
@@ -275,7 +275,7 @@ CompleteSubsample<-sample(AssemblySummaryFilteredComplete$assembly_accession, 75
 TreeCompl750<-DrawSubsample(CompleteSubsample)
 TreeCompl750
 
-ggsave("../figures/Ecoli_phylogenetic_trees/Ecoli_tree_with_phylogroups_and_DefSystems_20230614_Complete750.png",
+ggsave("./figures/Ecoli_phylogenetic_trees/Ecoli_tree_with_phylogroups_and_DefSystems_20240119_Complete750.png",
        plot=TreeCompl750, width = 35, height=35, units = "cm", dpi=300)
-ggsave("../figures/Ecoli_phylogenetic_trees/Ecoli_tree_with_phylogroups_and_DefSystems_20230614_Complete750.svg",
+ggsave("./figures/Ecoli_phylogenetic_trees/Ecoli_tree_with_phylogroups_and_DefSystems_20240119_Complete750.svg",
        plot=TreeCompl750, width = 35, height=35, units = "cm", dpi=300)
