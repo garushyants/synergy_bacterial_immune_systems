@@ -1,0 +1,72 @@
+defense_system,Bonferroni-positive,Bonferroni-negative,Benjamini.Hochberg-positive,Benjamini.Hochberg-negative
+3HP,1,0,3,1
+AbiD,1,2,0,5
+AbiE,12,4,10,6
+AbiH,2,0,1,1
+AbiL,1,0,2,2
+AbiQ,4,1,3,2
+AbiU,0,0,6,1
+AVAST II,0,1,1,1
+AVAST IV,0,0,1,2
+BREX I,3,4,2,3
+BstA,2,0,4,4
+cas_adaptation,3,1,0,6
+CBASS I,5,4,6,7
+CBASS II,3,0,1,2
+CRISPR I-E,24,9,6,4
+CRISPR I-F,1,0,6,0
+darTG,2,0,3,0
+dCTPdeaminase,4,0,1,1
+Dnd_ABCDE,3,2,4,6
+Dnd_FGH,3,3,4,5
+Dpd,7,9,1,1
+DprA-PRTase,4,0,1,0
+DRT I,1,2,1,2
+DRT II,0,0,1,1
+DRT III,4,1,2,4
+Druantia I,0,0,1,2
+Druantia III,8,5,1,6
+dsr I,1,0,0,0
+dXTPase,2,1,5,3
+Gabija,3,3,9,4
+GAO_19,2,0,3,2
+GAO_29,2,0,2,1
+gop_beta_cll,0,0,1,3
+Hachiman I,1,3,1,5
+Helicase-DUF2290,2,0,2,0
+hhe,9,0,3,2
+ietAS,3,3,3,0
+Kiwa,1,0,6,1
+Lamassu I,2,0,0,0
+Lit,3,1,0,0
+Mokosh II,7,4,4,10
+mza,4,0,0,3
+old,3,0,1,0
+PARIS,4,0,2,3
+PifA,2,1,5,0
+ppl,4,0,4,0
+PrrC,2,0,4,0
+PsyrTA,3,1,2,1
+Pycsar,0,0,3,0
+qatABCD,1,0,0,0
+Retron I-A,1,0,2,0
+Retron I-B,0,0,2,1
+Retron I-C,4,3,1,9
+Retron II-A,0,0,3,2
+Retron IV,1,0,1,2
+Retron V,4,0,1,0
+Retron XII,3,0,3,4
+RexAB,3,1,3,0
+RM I,13,8,3,4
+RM II,6,2,4,3
+RM IIG,3,3,3,5
+RM III,3,5,1,5
+RM IV,12,10,5,4
+Septu I,6,3,6,7
+Shedu,3,0,0,0
+SoFic,3,0,2,2
+SspABCD,0,0,1,0
+Thoeris I,2,2,5,4
+tmn,2,0,3,1
+Zorya I,3,2,4,0
+Zorya II,3,4,3,2

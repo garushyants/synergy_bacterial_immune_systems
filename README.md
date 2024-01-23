@@ -27,7 +27,7 @@ Scripts *Ecoli26k_tree_phylogroups_defense_systems.R* and *Visualize_phylogeneti
 
 *SynergisticVsAntagonistic_4pairs.R* Analyses EOP and liquid assay experiments data for four pairs of immune systems: Zorya II + Druantia III, tmn + Gabija, Kiwa + ietAS, and ietAS + Zorya II
 
-*defense_distribution_visulization.R* Visualize the data for defense system distribution, including Figure 1B, 1C, S2B, S2C, and S4.
+*defense_distribution_visulization.R* Visualize the data for defense system distribution, including Figure 1B, 1C, 2C, 2D, S1B, S2C, S2D and S4.
 
 #### **data**
 Contains data required to run the scripts above and some of the outputs
@@ -54,11 +54,11 @@ Contains data required to run the scripts above and some of the outputs
 
 *F6_EOP.xlsx* contains the results of Efficiency of Plating assay investigating the cooperation of tmn and other ATPase domain containing systems. [Figure 6]
 
-*FS1B_26k_location_system.csv* contains the raw count and percentage of defense systems' location. [Figure S1B]
+*FS1B_defense_location_percentage.csv* contains the raw count and percentage of defense systems' location. [Figure S1B]
 
-*FS2A_ecoli_significance_pair_frequency.csv* quantifies the co-occurring pattern between different systems, highlighting their co-occurrence and significance. [Figure S2A] 
+*FS2B_significant_pair_frequency.csv* quantifies the co-occurring pattern between different systems, highlighting their co-occurrence and significance. [Figure S2B] 
 
-*FS2C_Distances_between_positive_significant_pairs_location2.csv* quantifies the location pattern of each co-occuring pair. [Figure S2C]
+*FS2D_Distances_between_positive_significant_pairs_location2.csv* quantifies the location pattern of each co-occuring pair. [Figure S2D]
 
 *FS4B_5_dataset_defense_frequency1.xlsx* shows the difference of defense system composition across four orders and *E. coli*. It's used for Venn plot. [Figure S4B]
 

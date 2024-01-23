@@ -1,0 +1,252 @@
+location,count,percentage,combination
+chromosome-plasmid,66,0.55,Gabija-AbiL
+plasmid,25,0.20833333333333334,Gabija-AbiL
+chromosome,18,0.15,Gabija-AbiL
+prophage-plasmid,7,0.058333333333333334,Gabija-AbiL
+chromosome-prophage,3,0.025,Gabija-AbiL
+prophage,1,0.008333333333333333,Gabija-AbiL
+chromosome-prophage,108,0.5294117647058824,ietAS-DRT III
+chromosome,95,0.46568627450980393,ietAS-DRT III
+prophage,1,0.004901960784313725,ietAS-DRT III
+chromosome,1661,0.993421052631579,RM IIG-Druantia III
+chromosome-prophage,6,0.0035885167464114833,RM IIG-Druantia III
+chromosome-plasmid,3,0.0017942583732057417,RM IIG-Druantia III
+prophage-plasmid,1,0.0005980861244019139,RM IIG-Druantia III
+prophage,1,0.0005980861244019139,RM IIG-Druantia III
+chromosome,324,0.9848024316109423,Druantia III-AbiE
+chromosome-plasmid,5,0.015197568389057751,Druantia III-AbiE
+chromosome,137,0.6523809523809524,ietAS-Kiwa
+chromosome-prophage,57,0.2714285714285714,ietAS-Kiwa
+prophage-plasmid,9,0.04285714285714286,ietAS-Kiwa
+prophage,6,0.02857142857142857,ietAS-Kiwa
+chromosome-plasmid,1,0.004761904761904762,ietAS-Kiwa
+chromosome,32,1.0,PsyrTA-Mokosh II
+chromosome,336,0.9130434782608695,Zorya I-RM I
+chromosome-plasmid,20,0.05434782608695652,Zorya I-RM I
+chromosome-prophage,12,0.03260869565217391,Zorya I-RM I
+chromosome,538,0.7524475524475525,hhe-RM I
+chromosome-prophage,99,0.13846153846153847,hhe-RM I
+chromosome-plasmid,68,0.0951048951048951,hhe-RM I
+prophage,6,0.008391608391608392,hhe-RM I
+plasmid,2,0.002797202797202797,hhe-RM I
+prophage-plasmid,2,0.002797202797202797,hhe-RM I
+chromosome,1051,0.9211218229623137,RM II-Dpd
+chromosome-prophage,65,0.05696757230499562,RM II-Dpd
+chromosome-plasmid,25,0.021910604732690624,RM II-Dpd
+chromosome,1041,1.0,DRT III-AbiE
+chromosome,60,0.594059405940594,PARIS-AbiE
+chromosome-prophage,27,0.26732673267326734,PARIS-AbiE
+chromosome-plasmid,13,0.12871287128712872,PARIS-AbiE
+prophage-plasmid,1,0.009900990099009901,PARIS-AbiE
+chromosome,13081,0.7904882765288856,RM II-RM I
+chromosome-plasmid,2387,0.14424703891708968,RM II-RM I
+chromosome-prophage,1080,0.06526468455402465,RM II-RM I
+chromosome,11,1.0,GAO_29-AbiE
+chromosome-plasmid,1652,0.5341092790171355,RM I-CBASS I
+chromosome,1265,0.4089880375040414,RM I-CBASS I
+chromosome-prophage,101,0.032654380860006466,RM I-CBASS I
+plasmid,66,0.02133850630455868,RM I-CBASS I
+prophage-plasmid,8,0.0025864856126737797,RM I-CBASS I
+prophage,1,0.00032331070158422246,RM I-CBASS I
+plasmid,46,0.9583333333333334,PARIS-AbiQ
+chromosome-plasmid,2,0.041666666666666664,PARIS-AbiQ
+chromosome,187,0.9842105263157894,RM IV-PsyrTA
+chromosome-prophage,2,0.010526315789473684,RM IV-PsyrTA
+chromosome-plasmid,1,0.005263157894736842,RM IV-PsyrTA
+chromosome,1824,0.9956331877729258,Zorya II-RM IIG
+chromosome-prophage,5,0.0027292576419213972,Zorya II-RM IIG
+chromosome-plasmid,2,0.001091703056768559,Zorya II-RM IIG
+prophage-plasmid,1,0.0005458515283842794,Zorya II-RM IIG
+chromosome,296,0.8154269972451791,dXTPase-RM III
+chromosome-plasmid,35,0.09641873278236915,dXTPase-RM III
+chromosome-prophage,23,0.06336088154269973,dXTPase-RM III
+prophage-plasmid,5,0.013774104683195593,dXTPase-RM III
+plasmid,3,0.008264462809917356,dXTPase-RM III
+prophage,1,0.0027548209366391185,dXTPase-RM III
+plasmid,76,0.8,ppl-PifA
+chromosome-plasmid,15,0.15789473684210525,ppl-PifA
+chromosome,2,0.021052631578947368,ppl-PifA
+prophage-plasmid,2,0.021052631578947368,ppl-PifA
+chromosome,230,1.0,Thoeris I-Mokosh II
+chromosome,331,0.8358585858585859,RM I-PrrC
+chromosome-plasmid,30,0.07575757575757576,RM I-PrrC
+chromosome-prophage,29,0.07323232323232323,RM I-PrrC
+prophage-plasmid,2,0.005050505050505051,RM I-PrrC
+prophage,2,0.005050505050505051,RM I-PrrC
+plasmid,2,0.005050505050505051,RM I-PrrC
+chromosome-plasmid,47,0.746031746031746,tmn-CBASS II
+chromosome,15,0.23809523809523808,tmn-CBASS II
+plasmid,1,0.015873015873015872,tmn-CBASS II
+chromosome,16,0.5714285714285714,dCTPdeaminase-Mokosh II
+chromosome-prophage,10,0.35714285714285715,dCTPdeaminase-Mokosh II
+chromosome-plasmid,2,0.07142857142857142,dCTPdeaminase-Mokosh II
+chromosome,3243,0.8313253012048193,RM I-AbiE
+chromosome-plasmid,519,0.1330428095360164,RM I-AbiE
+chromosome-prophage,138,0.03537554473211997,RM I-AbiE
+plasmid,1,0.0002563445270443476,RM I-AbiE
+chromosome,185,0.9068627450980392,Zorya II-RM IV
+chromosome-prophage,19,0.09313725490196079,Zorya II-RM IV
+chromosome,33,0.6470588235294118,hhe-BREX I
+chromosome-plasmid,8,0.1568627450980392,hhe-BREX I
+prophage-plasmid,8,0.1568627450980392,hhe-BREX I
+chromosome-prophage,2,0.0392156862745098,hhe-BREX I
+chromosome,19,1.0,Mokosh II-GAO_29
+chromosome-plasmid,8,0.7272727272727273,Druantia III-AbiQ
+chromosome,3,0.2727272727272727,Druantia III-AbiQ
+chromosome-prophage,13,0.4482758620689655,dCTPdeaminase-AbiE
+chromosome,10,0.3448275862068966,dCTPdeaminase-AbiE
+chromosome-plasmid,6,0.20689655172413793,dCTPdeaminase-AbiE
+chromosome,129,0.675392670157068,SoFic-RM IV
+chromosome-prophage,62,0.32460732984293195,SoFic-RM IV
+chromosome,1991,0.840793918918919,Septu I-RM II
+chromosome-plasmid,197,0.08319256756756757,Septu I-RM II
+chromosome-prophage,180,0.07601351351351351,Septu I-RM II
+chromosome,311,0.7548543689320388,Dnd_FGH-CBASS I
+chromosome-plasmid,97,0.2354368932038835,Dnd_FGH-CBASS I
+chromosome-prophage,4,0.009708737864077669,Dnd_FGH-CBASS I
+chromosome,319,0.7559241706161137,Dnd_ABCDE-CBASS I
+chromosome-plasmid,99,0.23459715639810427,Dnd_ABCDE-CBASS I
+chromosome-prophage,4,0.009478672985781991,Dnd_ABCDE-CBASS I
+chromosome,631,0.7423529411764705,darTG-RM I
+chromosome-plasmid,165,0.19411764705882353,darTG-RM I
+chromosome-prophage,53,0.06235294117647059,darTG-RM I
+prophage-plasmid,1,0.001176470588235294,darTG-RM I
+chromosome,111,0.9823008849557522,darTG-Zorya I
+chromosome-prophage,2,0.017699115044247787,darTG-Zorya I
+chromosome-plasmid,588,0.4263959390862944,RM IV-CBASS I
+chromosome,477,0.34590282813633066,RM IV-CBASS I
+chromosome-prophage,294,0.2131979695431472,RM IV-CBASS I
+prophage-plasmid,19,0.013778100072516316,RM IV-CBASS I
+prophage,1,0.0007251631617113851,RM IV-CBASS I
+chromosome,872,0.8059149722735675,RM I-DRT III
+chromosome-plasmid,109,0.10073937153419593,RM I-DRT III
+chromosome-prophage,94,0.08687615526802218,RM I-DRT III
+prophage-plasmid,5,0.0046210720887245845,RM I-DRT III
+prophage,2,0.0018484288354898336,RM I-DRT III
+chromosome-prophage,602,0.621900826446281,RM II-BstA
+chromosome,334,0.3450413223140496,RM II-BstA
+chromosome-plasmid,32,0.03305785123966942,RM II-BstA
+prophage-plasmid,31,0.4246575342465753,Gabija-BstA
+chromosome-plasmid,24,0.3287671232876712,Gabija-BstA
+chromosome-prophage,12,0.1643835616438356,Gabija-BstA
+chromosome,6,0.0821917808219178,Gabija-BstA
+chromosome,26,0.5098039215686274,old-AbiE
+chromosome-prophage,24,0.47058823529411764,old-AbiE
+chromosome-plasmid,1,0.0196078431372549,old-AbiE
+chromosome,131,1.0,Thoeris I-PsyrTA
+chromosome-plasmid,59,0.686046511627907,Septu I-PifA
+plasmid,20,0.23255813953488372,Septu I-PifA
+chromosome,4,0.046511627906976744,Septu I-PifA
+prophage-plasmid,2,0.023255813953488372,Septu I-PifA
+chromosome-prophage,1,0.011627906976744186,Septu I-PifA
+chromosome,93,1.0,SoFic-Mokosh II
+chromosome,18,0.6428571428571429,dsr I-Retron XII
+chromosome-prophage,8,0.2857142857142857,dsr I-Retron XII
+prophage,2,0.07142857142857142,dsr I-Retron XII
+chromosome,148,0.9426751592356688,Septu I-Dnd_FGH
+chromosome-prophage,6,0.03821656050955414,Septu I-Dnd_FGH
+chromosome-plasmid,3,0.01910828025477707,Septu I-Dnd_FGH
+chromosome,2219,0.952769428939459,RM I-Druantia III
+chromosome-prophage,62,0.026620867325032202,RM I-Druantia III
+chromosome-plasmid,48,0.020609703735508803,RM I-Druantia III
+chromosome,1888,0.9989417989417989,Zorya II-Druantia III
+plasmid,2,0.0010582010582010583,Zorya II-Druantia III
+chromosome,940,0.9152872444011685,qatABCD-CBASS I
+chromosome-plasmid,78,0.0759493670886076,qatABCD-CBASS I
+chromosome-prophage,6,0.005842259006815969,qatABCD-CBASS I
+plasmid,3,0.0029211295034079843,qatABCD-CBASS I
+chromosome-plasmid,7,0.3888888888888889,RexAB-Druantia III
+chromosome,6,0.3333333333333333,RexAB-Druantia III
+chromosome-prophage,5,0.2777777777777778,RexAB-Druantia III
+chromosome,449,0.9452631578947368,RM IV-DRT III
+chromosome-prophage,24,0.05052631578947368,RM IV-DRT III
+chromosome-plasmid,2,0.004210526315789474,RM IV-DRT III
+chromosome,204,0.6238532110091743,RM IV-Lit
+chromosome-prophage,122,0.3730886850152905,RM IV-Lit
+prophage,1,0.0030581039755351682,RM IV-Lit
+plasmid,1181,0.8820014936519791,tmn-Gabija
+chromosome,82,0.061239731142643763,tmn-Gabija
+chromosome-plasmid,73,0.05451829723674384,tmn-Gabija
+prophage-plasmid,3,0.0022404779686333084,tmn-Gabija
+chromosome,65,0.9701492537313433,Hachiman I-CBASS II
+chromosome-plasmid,2,0.029850746268656716,Hachiman I-CBASS II
+chromosome,150,0.9433962264150944,Septu I-Dnd_ABCDE
+chromosome-prophage,6,0.03773584905660377,Septu I-Dnd_ABCDE
+chromosome-plasmid,3,0.018867924528301886,Septu I-Dnd_ABCDE
+chromosome,8,0.8888888888888888,hhe-Zorya I
+chromosome-prophage,1,0.1111111111111111,hhe-Zorya I
+chromosome,1234,0.7456193353474321,dXTPase-RM I
+chromosome-prophage,203,0.12265861027190332,dXTPase-RM I
+chromosome-plasmid,188,0.113595166163142,dXTPase-RM I
+prophage,17,0.01027190332326284,dXTPase-RM I
+prophage-plasmid,12,0.0072507552870090634,dXTPase-RM I
+plasmid,1,0.0006042296072507553,dXTPase-RM I
+chromosome,325,0.6944444444444444,ietAS-RM III
+chromosome-prophage,85,0.18162393162393162,ietAS-RM III
+prophage-plasmid,26,0.05555555555555555,ietAS-RM III
+chromosome-plasmid,21,0.04487179487179487,ietAS-RM III
+prophage,11,0.023504273504273504,ietAS-RM III
+chromosome,61,0.6853932584269663,RM IV-AbiH
+chromosome-prophage,28,0.3146067415730337,RM IV-AbiH
+chromosome,191,0.8721461187214612,mza-RM I
+chromosome-plasmid,22,0.1004566210045662,mza-RM I
+chromosome-prophage,6,0.0273972602739726,mza-RM I
+prophage,61,0.4357142857142857,RexAB-Lit
+chromosome,54,0.38571428571428573,RexAB-Lit
+chromosome-prophage,25,0.17857142857142858,RexAB-Lit
+chromosome,1104,0.9468267581475128,RM IV-Druantia III
+chromosome-prophage,60,0.051457975986277875,RM IV-Druantia III
+chromosome-plasmid,2,0.0017152658662092624,RM IV-Druantia III
+chromosome-plasmid,12,0.32432432432432434,Shedu-GAO_19
+plasmid,12,0.32432432432432434,Shedu-GAO_19
+prophage,8,0.21621621621621623,Shedu-GAO_19
+chromosome,2,0.05405405405405406,Shedu-GAO_19
+prophage-plasmid,2,0.05405405405405406,Shedu-GAO_19
+chromosome-prophage,1,0.02702702702702703,Shedu-GAO_19
+chromosome,1258,1.0,Dnd_FGH-Dnd_ABCDE
+chromosome,4168,0.8643716300290336,RM II-AbiE
+chromosome-plasmid,502,0.10410618000829532,RM II-AbiE
+chromosome-prophage,152,0.03152218996267109,RM II-AbiE
+chromosome,630,0.8278580814717477,RM IV-Mokosh II
+chromosome-prophage,131,0.1721419185282523,RM IV-Mokosh II
+chromosome,98,0.6621621621621622,dCTPdeaminase-RM IV
+chromosome-prophage,33,0.22297297297297297,dCTPdeaminase-RM IV
+chromosome-plasmid,16,0.10810810810810811,dCTPdeaminase-RM IV
+prophage,1,0.006756756756756757,dCTPdeaminase-RM IV
+chromosome,2053,0.9140694568121104,RM IIG-RM I
+chromosome-prophage,133,0.059216384683882455,RM IIG-RM I
+chromosome-plasmid,52,0.02315227070347284,RM IIG-RM I
+prophage-plasmid,4,0.0017809439002671415,RM IIG-RM I
+plasmid,3,0.0013357079252003562,RM IIG-RM I
+prophage,1,0.0004452359750667854,RM IIG-RM I
+chromosome,106,0.6091954022988506,Shedu-RM IV
+chromosome-prophage,43,0.2471264367816092,Shedu-RM IV
+chromosome-plasmid,24,0.13793103448275862,Shedu-RM IV
+prophage-plasmid,1,0.005747126436781609,Shedu-RM IV
+prophage,102,0.5930232558139535,Retron IV-DRT I
+chromosome,59,0.3430232558139535,Retron IV-DRT I
+chromosome-prophage,11,0.06395348837209303,Retron IV-DRT I
+chromosome,152,0.6972477064220184,RM III-AbiD
+chromosome-plasmid,35,0.16055045871559634,RM III-AbiD
+chromosome-prophage,22,0.10091743119266056,RM III-AbiD
+plasmid,7,0.03211009174311927,RM III-AbiD
+prophage-plasmid,2,0.009174311926605505,RM III-AbiD
+chromosome-plasmid,29,0.6590909090909091,ppl-hhe
+chromosome,8,0.18181818181818182,ppl-hhe
+chromosome-prophage,5,0.11363636363636363,ppl-hhe
+prophage-plasmid,2,0.045454545454545456,ppl-hhe
+chromosome-plasmid,68,0.8192771084337349,ppl-AbiE
+plasmid,9,0.10843373493975904,ppl-AbiE
+chromosome,6,0.07228915662650602,ppl-AbiE
+chromosome,641,0.7982565379825654,hhe-RM II
+chromosome-plasmid,122,0.1519302615193026,hhe-RM II
+chromosome-prophage,40,0.049813200498132,hhe-RM II
+chromosome,6,0.5454545454545454,mza-hhe
+chromosome-prophage,3,0.2727272727272727,mza-hhe
+chromosome-plasmid,2,0.18181818181818182,mza-hhe
+chromosome,666,0.9541547277936963,BREX I-AbiE
+chromosome-plasmid,30,0.04297994269340974,BREX I-AbiE
+plasmid,2,0.0028653295128939827,BREX I-AbiE
+chromosome,58,0.8405797101449275,Septu I-Lamassu I
+chromosome-prophage,7,0.10144927536231885,Septu I-Lamassu I
+prophage,4,0.057971014492753624,Septu I-Lamassu I
