@@ -215,3 +215,13 @@ ggsave("./figures/Ecoli_pagel_heatmap_pagel_0.005.png", plot= heatmap,
        height = 15.5, width =19, units ="cm", dpi=300)
 ggsave("./figures/Ecoli_pagel_heatmap_pagel_0.005.svg", plot= heatmap,
        height = 15.5, width =19, units ="cm", dpi=300)
+
+
+#Check some systems
+MIIRIVDf<-as.data.frame(t(subset(DefenceBySystemWideBinary,
+                                 DefenceBySystemWideBinary$System %in% c("Mokosh II", "RM IV"))))
+MIIRIVDfF<-subset(MIIRIVDf, MIIRIVDf$`6` == 1 & MIIRIVDf$`26` ==1)
+
+ZIIDIIIDf<-as.data.frame(t(subset(DefenceBySystemWideBinary,
+                                 DefenceBySystemWideBinary$System %in% c("Zorya II", "Druantia III"))))
+ZIIDIIIDfF<-subset(ZIIDIIIDf, ZIIDIIIDf$`7` == 1 & ZIIDIIIDf$`9` ==1)
