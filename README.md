@@ -5,7 +5,7 @@ Contain scripts to reproduce the analysis and visualize data
 
 *Ecoli_numContigs_vc_numDefence.R* builds correlation between number of contigs in genome and number of predicted immune systems
 
-*TableS1_to_csvs.R* transforms data/TableS1_defence_occurrence_in_datasets.xlsx to five CSV files (e.g. ecoli_filtered.csv) used in downstream analysis
+*TableS1_to_csvs.R* transforms data/TableS1_defence_occurrence_in_datasets.xlsx to five CSV files (e.g. *ecoli_filtered.csv*) used in downstream analysis
 
 Scripts *Ecoli26k_tree_phylogroups_defense_systems.R* and *Visualize_phylogenetic_trees_orders.R* visualize phylognetic trees and add data to them
 
@@ -34,7 +34,7 @@ Scripts *Ecoli26k_tree_phylogroups_defense_systems.R* and *Visualize_phylogeneti
 #### **data**
 Contains data required to run the scripts above and some of the outputs
 
-*Table_S1_defence_occurrence_in_datasets.xlsx* contains the defense system distribution in *E. coli*, Enterobacteriales, Burkholderiales, Bacillales and Pseudomonadales, which is used for the defense system co-occurrence calculation. This is the combination of *26k_Ecoli_with_prophages.csv*, *merged_baci3.csv*, *merged_burk3.csv*, *merged_enter3.csv* and *merged_pseu3.csv*. [Figure 1A and S4]
+*Table_S1_defence_occurrence_in_datasets.xlsx* contains the defense system distribution in *E. coli*, Enterobacteriales, Burkholderiales, Bacillales and Pseudomonadales, which is used for the defense system co-occurrence calculation. This is the combination of *ecoli_filtered.csv*, *baci_filtered.csv*, *burk_filtered.csv*, *enter_filtered.csv* and *pseu_filtered.csv*. [Figure 1A and S4]
 
 *F1B_phylogroup_vs_number_of_defense.csv* provides information on the frequency of the amount of defense system within different *E. coli* strains, categorized by their phylogroups. [Figure 1B]
 
