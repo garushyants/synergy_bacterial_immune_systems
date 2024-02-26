@@ -5,7 +5,7 @@ Contain scripts to reproduce the analysis and visualize data
 
 *Ecoli_numContigs_vc_numDefence.R* builds correlation between number of contigs in genome and number of predicted immune systems
 
-*TableS1_to_csvs.R* transforms data/TableS1_defence_occurrence_in_datasets.xlsx to five CSV files (e.g. *ecoli_filtered.csv*) used in downstream analysis
+*TableS1_to_csvs.R* transforms *data/TableS1_defence_occurrence_in_datasets.xlsx* to five CSV files (e.g. *ecoli_filtered.csv*) used in downstream analysis
 
 Scripts *Ecoli26k_tree_phylogroups_defense_systems.R* and *Visualize_phylogenetic_trees_orders.R* visualize phylognetic trees and add data to them
 
